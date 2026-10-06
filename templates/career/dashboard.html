@@ -1,0 +1,205 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Dashboard | Ready for Future
+{% endblock %}
+
+{% block content %}
+
+<section class="dashboard-section">
+
+    <div class="dashboard-container">
+
+        <div class="dashboard-header">
+
+            <div>
+
+                <span class="section-label">
+                    YOUR DASHBOARD
+                </span>
+
+                <h1>
+                    Welcome, {{ profile.full_name }} 👋
+                </h1>
+
+                <p>
+                    Let's prepare you for your next career opportunity.
+                </p>
+
+            </div>
+
+            <a
+                href="{% url 'career:profile' %}"
+                class="secondary-button">
+
+                Edit Profile
+
+            </a>
+
+        </div>
+
+
+        <!-- Profile Summary -->
+
+        <div class="dashboard-grid">
+
+
+            <div class="dashboard-card">
+
+                <span class="card-label">
+                    CURRENT ROLE
+                </span>
+
+                <h2>
+                    {{ profile.current_role|default:"Not added yet" }}
+                </h2>
+
+            </div>
+
+
+            <div class="dashboard-card">
+
+                <span class="card-label">
+                    EXPERIENCE
+                </span>
+
+                <h2>
+                    {{ profile.get_experience_level_display }}
+                </h2>
+
+            </div>
+
+
+            <div class="dashboard-card">
+
+                <span class="card-label">
+                    TARGET ROLE
+                </span>
+
+                <h2>
+                    {{ profile.target_role }}
+                </h2>
+
+            </div>
+
+
+        </div>
+
+
+        <!-- Skills -->
+
+        <div class="dashboard-card skills-card">
+
+            <span class="card-label">
+                YOUR SKILLS
+            </span>
+
+            <div class="skills-container">
+
+                {% for skill in profile.skills.split %}
+                    <span class="skill-tag">
+                        {{ skill }}
+                    </span>
+                {% endfor %}
+
+            </div>
+
+            <p class="skills-note">
+                Tip: Add skills separated by commas in your profile.
+            </p>
+
+        </div>
+
+        <div class="dashboard-card recommendation-card">
+            <span class="card-label">CAREER IDEAS</span>
+            <h2>Roles to explore</h2>
+            <button
+                id="recommendation-toggle"
+                class="secondary-button"
+                type="button"
+                aria-expanded="true">
+                Hide career ideas
+            </button>
+            <ul id="career-recommendations">
+                {% for role in career_recommendations %}
+                    <li>{{ role }}</li>
+                {% endfor %}
+            </ul>
+            <p class="skills-note">
+                These simple suggestions are based on skills in your profile.
+            </p>
+        </div>
+
+        <div class="dashboard-card recommendation-card">
+            <span class="card-label">AI CAREER IDEAS</span>
+            <h2>Explore AI recommendations</h2>
+            <p class="skills-note">
+                Groq uses your target role, experience, and skills to suggest
+                career directions and skills to improve.
+            </p>
+            <form method="post">
+                {% csrf_token %}
+                <button class="primary-button" type="submit">
+                    Get AI Recommendations
+                </button>
+            </form>
+            {% if career_ai_error %}
+                <p class="ai-error" role="alert">{{ career_ai_error }}</p>
+            {% endif %}
+            {% if career_ai_recommendations %}
+                <div class="ai-response">
+                    {{ career_ai_recommendations|linebreaksbr }}
+                </div>
+            {% endif %}
+        </div>
+
+
+        <!-- Next Steps -->
+
+        <div class="dashboard-card next-steps">
+
+            <span class="card-label">
+                NEXT STEPS
+            </span>
+
+            <h2>
+                Let's prepare your career roadmap.
+            </h2>
+
+            <div class="next-step-grid">
+
+                <a href="{% url 'resumes:upload' %}">
+                    📄
+                    <strong>Resume Analysis</strong>
+                    <p>Upload and analyze your resume.</p>
+                </a>
+
+                <a href="{% url 'learning:roadmap' %}">
+                    🎯
+                    <strong>Skill Gap</strong>
+                    <p>Find the skills you need next.</p>
+                </a>
+
+                <a href="{% url 'learning:roadmap' %}">
+                    🧭
+                    <strong>Learning Roadmap</strong>
+                    <p>Follow your personalized plan.</p>
+                </a>
+
+                <a href="{% url 'interview:questions' %}">
+                    💬
+                    <strong>Interview Practice</strong>
+                    <p>Practice role-specific questions.</p>
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% load static %}
+<script src="{% static 'js/dashboard.js' %}"></script>
+{% endblock %}

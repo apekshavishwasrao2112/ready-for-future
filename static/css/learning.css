@@ -1,0 +1,131 @@
+.learning-page {
+    width: min(900px, 90%);
+    margin: 56px auto;
+}
+
+.learning-heading {
+    margin-bottom: 24px;
+}
+
+.learning-heading h1,
+.lesson-card h1 {
+    margin-bottom: 10px;
+    font-size: clamp(32px, 5vw, 44px);
+}
+
+.learning-heading p,
+.lesson-card > p {
+    color: #aab2c0;
+}
+
+.roadmap-switch {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.roadmap-switch a,
+.learning-back {
+    color: #b3a4ff;
+    text-decoration: none;
+}
+
+.roadmap-switch a {
+    padding: 10px 14px;
+    border: 1px solid #343b48;
+    border-radius: 9px;
+}
+
+.learning-progress,
+.lesson-card,
+.roadmap-days li {
+    padding: 22px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 14px;
+    background: #111621;
+}
+
+.learning-progress p {
+    margin-bottom: 10px;
+}
+
+.learning-progress-track {
+    height: 10px;
+    overflow: hidden;
+    border-radius: 999px;
+    background: #252c3a;
+}
+
+.learning-progress-bar {
+    width: 0;
+    height: 100%;
+    border-radius: inherit;
+    background: #7c5cff;
+    transition: width 700ms ease;
+}
+
+.roadmap-days {
+    display: grid;
+    gap: 14px;
+    margin-top: 20px;
+    list-style: none;
+}
+
+.roadmap-days li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+}
+
+.roadmap-days li a {
+    color: #b3a4ff;
+    text-decoration: none;
+}
+
+.day-label,
+.completed-label {
+    color: #aab2c0;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.completed-label {
+    color: #8de0a2;
+}
+
+.day-complete {
+    border-color: rgba(141, 224, 162, 0.4) !important;
+}
+
+.lesson-card {
+    display: grid;
+    gap: 20px;
+}
+
+.learning-back {
+    justify-self: start;
+}
+
+.lesson-task {
+    padding: 20px;
+    border-radius: 12px;
+    background: #0b0f18;
+}
+
+.lesson-task h2 {
+    margin-bottom: 8px;
+}
+
+@media (max-width: 600px) {
+    .learning-page {
+        margin: 32px auto;
+    }
+
+    .roadmap-days li {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+}

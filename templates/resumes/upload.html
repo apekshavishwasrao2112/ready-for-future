@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Upload Resume | Ready for Future{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/resume.css' %}">
+{% endblock %}
+
+{% block content %}
+<section class="resume-page">
+    <div class="resume-card">
+        <span class="section-label">RESUME REVIEW</span>
+        <h1>Upload Resume</h1>
+        <p class="resume-intro">
+            Upload a PDF resume to save it and request feedback based on
+            the text in the document.
+        </p>
+
+        <form method="post" enctype="multipart/form-data" class="resume-form">
+            {% csrf_token %}
+
+            <label for="{{ form.resume_file.id_for_label }}">Choose PDF</label>
+            {{ form.resume_file }}
+            <p class="file-name">{{ form.resume_file.help_text }}</p>
+            {% for error in form.resume_file.errors %}
+                <p class="resume-error">{{ error }}</p>
+            {% endfor %}
+
+            <p id="file-name" class="file-name">No file selected</p>
+
+            <button type="submit" class="primary-button">
+                Upload Resume
+            </button>
+        </form>
+
+        <p class="resume-note">
+            Text is extracted from the uploaded PDF so the AI can review its
+            actual contents.
+        </p>
+    </div>
+
+    <a class="resume-text-link" href="{% url 'resumes:list' %}">
+        View uploaded resumes
+    </a>
+</section>
+<script src="{% static 'js/resume.js' %}"></script>
+{% endblock %}

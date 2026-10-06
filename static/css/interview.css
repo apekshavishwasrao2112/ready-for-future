@@ -1,0 +1,131 @@
+.interview-page {
+    width: min(900px, 90%);
+    margin: 56px auto;
+}
+
+.interview-heading {
+    margin-bottom: 28px;
+}
+
+.interview-heading h1 {
+    margin-bottom: 10px;
+    font-size: clamp(32px, 5vw, 44px);
+}
+
+.interview-heading p,
+.interview-note {
+    color: #aab2c0;
+}
+
+.ai-question-panel form {
+    margin-top: 16px;
+}
+
+.ai-error {
+    margin-top: 14px;
+    color: #ff9a9a;
+}
+
+.ai-response {
+    margin-top: 18px;
+    padding: 16px;
+    border-radius: 10px;
+    color: #dce1e8;
+    background: #080b12;
+    overflow-wrap: anywhere;
+}
+
+.question-group,
+.practice-card {
+    margin-bottom: 20px;
+    padding: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 14px;
+    background: #111621;
+}
+
+.question-group h2,
+.practice-card h2 {
+    margin-bottom: 14px;
+}
+
+.question-group h3 {
+    margin: 18px 0 8px;
+    color: #b3a4ff;
+}
+
+.question-list {
+    display: grid;
+    gap: 10px;
+    margin-top: 16px;
+    padding-left: 20px;
+    color: #dce1e8;
+}
+
+.topic-label {
+    display: inline-block;
+    margin-right: 8px;
+    color: #b3a4ff;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.practice-card {
+    display: grid;
+    gap: 12px;
+}
+
+.practice-card h2 {
+    font-size: 20px;
+}
+
+.practice-answer {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #343b48;
+    border-radius: 9px;
+    color: #f4f7fb;
+    background: #080b12;
+    font: inherit;
+    resize: vertical;
+}
+
+.practice-answer:focus {
+    outline: 2px solid #7c5cff;
+}
+
+.answer-count {
+    color: #aab2c0;
+    font-size: 13px;
+}
+
+.answer-tip {
+    padding: 14px;
+    border-radius: 9px;
+    color: #dce1e8;
+    background: #0b0f18;
+}
+
+.interview-action {
+    display: inline-block;
+    text-decoration: none;
+}
+
+.interview-back {
+    display: inline-block;
+    margin: 8px 0 30px;
+    color: #b3a4ff;
+    text-decoration: none;
+}
+
+@media (max-width: 600px) {
+    .interview-page {
+        margin: 32px auto;
+    }
+
+    .question-group,
+    .practice-card {
+        padding: 20px 16px;
+    }
+}

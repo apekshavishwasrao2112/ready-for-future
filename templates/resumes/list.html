@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Resumes | Ready for Future{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/resume.css' %}">
+{% endblock %}
+
+{% block content %}
+<section class="resume-page">
+    <div class="resume-card">
+        <span class="section-label">YOUR FILES</span>
+        <h1>My Resumes</h1>
+        <p class="resume-intro">
+            Your uploaded PDF resumes are listed here.
+        </p>
+
+        {% if resumes %}
+            <ul class="resume-list">
+                {% for resume in resumes %}
+                    <li>
+                        <div>
+                            <a href="{% url 'resumes:result' resume.id %}">
+                                {{ resume.resume_file.name }}
+                            </a>
+                            <p>Uploaded {{ resume.uploaded_at|date:"M j, Y, g:i a" }}</p>
+                        </div>
+                        <a
+                            class="resume-text-link"
+                            href="{% url 'resumes:download' resume.id %}">
+                            Download file
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="empty-resumes">
+                You have not uploaded a resume yet.
+            </p>
+        {% endif %}
+
+        <a class="primary-button" href="{% url 'resumes:upload' %}">
+            Upload Resume
+        </a>
+    </div>
+</section>
+{% endblock %}

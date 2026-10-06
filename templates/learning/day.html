@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Day {{ day_number }} | Learning Roadmap{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/learning.css' %}">
+{% endblock %}
+
+{% block content %}
+<section class="learning-page">
+    <article class="lesson-card">
+        <a class="learning-back" href="{% url 'learning:roadmap' %}?track={{ roadmap_type }}">
+            ← Back to {{ roadmap_type }} roadmap
+        </a>
+        <span class="section-label">DAY {{ day_number }}</span>
+        <h1>{{ day.title }}</h1>
+        <p>{{ day.content }}</p>
+
+        <div class="lesson-task">
+            <h2>Try it</h2>
+            <p>{{ day.task }}</p>
+        </div>
+
+        <form method="post">
+            {% csrf_token %}
+            <button class="primary-button" type="submit">
+                {% if completed %}Mark as not completed{% else %}Mark Day Complete{% endif %}
+            </button>
+        </form>
+    </article>
+</section>
+{% endblock %}

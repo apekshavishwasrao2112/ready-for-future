@@ -1,0 +1,48 @@
+.navbar {
+    gap: 20px;
+}
+
+.nav-links {
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.nav-auth {
+    flex-shrink: 0;
+}
+
+.nav-button {
+    display: inline-block;
+    text-decoration: none;
+}
+
+@media (max-width: 900px) {
+    .nav-links {
+        display: flex;
+        gap: 14px;
+        overflow-x: auto;
+    }
+}
+
+@media (max-width: 600px) {
+    .navbar {
+        height: auto;
+        min-height: 76px;
+        flex-wrap: wrap;
+        padding: 12px 20px;
+    }
+
+    .nav-auth {
+        display: flex;
+    }
+
+    .nav-links {
+        width: 100%;
+        justify-content: space-between;
+        gap: 10px;
+    }
+
+    .nav-auth .nav-button {
+        display: inline-block;
+    }
+}

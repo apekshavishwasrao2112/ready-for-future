@@ -1,0 +1,29 @@
+.form-error ul {
+    margin-left: 18px;
+}
+
+.auth-card .helptext {
+    display: block;
+    margin-top: 7px;
+    color: #aab2c0;
+    font-size: 12px;
+}
+
+.auth-card input,
+.profile-card input,
+.profile-card select,
+.profile-card textarea {
+    max-width: 100%;
+}
+
+@media (max-width: 600px) {
+    .auth-section,
+    .profile-section {
+        padding: 48px 20px;
+    }
+
+    .auth-card,
+    .profile-card {
+        padding: 24px 18px;
+    }
+}

@@ -1,0 +1,64 @@
+.recommendation-card {
+    margin-top: 22px;
+}
+
+.recommendation-card ul {
+    margin: 12px 0 0;
+    padding-left: 20px;
+    color: #dce1e8;
+}
+
+.recommendation-card .skills-note {
+    margin-top: 14px;
+}
+
+.recommendation-card .secondary-button {
+    margin: 8px 0;
+}
+
+.recommendation-card form {
+    margin-top: 16px;
+}
+
+.ai-error {
+    margin-top: 14px;
+    color: #ff9a9a;
+}
+
+.ai-response {
+    margin-top: 18px;
+    padding: 16px;
+    border-radius: 10px;
+    color: #dce1e8;
+    background: #080b12;
+    overflow-wrap: anywhere;
+}
+
+.next-step-grid a {
+    display: block;
+    padding: 20px;
+    border: 1px solid #202632;
+    border-radius: 12px;
+    background: #080b12;
+    color: inherit;
+    font-size: 24px;
+    text-decoration: none;
+    transition: border-color 0.2s, transform 0.2s;
+}
+
+.next-step-grid a:hover {
+    transform: translateY(-3px);
+    border-color: #6650d9;
+}
+
+.next-step-grid a strong {
+    display: block;
+    margin-top: 10px;
+    font-size: 15px;
+}
+
+.next-step-grid a p {
+    margin-top: 5px;
+    color: #aab2c0;
+    font-size: 13px;
+}

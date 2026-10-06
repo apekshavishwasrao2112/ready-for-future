@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Interview Practice | Ready for Future{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/interview.css' %}">
+{% endblock %}
+
+{% block content %}
+<section class="interview-page">
+    <div class="interview-heading">
+        <span class="section-label">PRACTICE MODE</span>
+        <h1>Try an Answer</h1>
+        <p>Write a practice answer, then reveal a tip to compare your ideas.</p>
+    </div>
+
+    {% for question in questions %}
+        <article class="practice-card">
+            <span class="topic-label">{{ question.get_topic_display }}</span>
+            <h2>{{ question.question }}</h2>
+            <label for="answer-{{ question.id }}">Your practice answer</label>
+            <textarea
+                id="answer-{{ question.id }}"
+                class="practice-answer"
+                rows="4"
+                placeholder="Write a few points you would mention..."></textarea>
+            <p class="answer-count" aria-live="polite">0 words</p>
+            <button
+                type="button"
+                class="secondary-button answer-toggle"
+                aria-expanded="false">
+                Show answer tip
+            </button>
+            <p class="answer-tip" hidden>{{ question.answer_tip }}</p>
+        </article>
+    {% empty %}
+        <p>No interview questions are available yet.</p>
+    {% endfor %}
+
+    <a class="interview-back" href="{% url 'interview:questions' %}">
+        Back to all questions
+    </a>
+</section>
+<script src="{% static 'js/interview.js' %}"></script>
+{% endblock %}

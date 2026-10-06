@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Career Profile | Ready for Future
+{% endblock %}
+
+{% block content %}
+
+<section class="profile-section">
+
+    <div class="profile-container">
+
+        <div class="profile-header">
+
+            <span class="section-label">
+                YOUR CAREER
+            </span>
+
+            <h1>Build Your Career Profile</h1>
+
+            <p>
+                Tell us where you are today and where you want to go.
+            </p>
+
+        </div>
+
+
+        <div class="profile-card">
+
+            <form method="POST">
+
+                {% csrf_token %}
+
+                {% for field in form %}
+
+                    <div class="form-group">
+
+                        <label>
+                            {{ field.label }}
+                        </label>
+
+                        {{ field }}
+
+                        {% if field.help_text %}
+                            <small>
+                                {{ field.help_text }}
+                            </small>
+                        {% endif %}
+
+                        {% if field.errors %}
+                            <div class="form-error">
+                                {{ field.errors }}
+                            </div>
+                        {% endif %}
+
+                    </div>
+
+                {% endfor %}
+
+
+                <button
+                    type="submit"
+                    class="primary-button full-button">
+
+                    Save Career Profile →
+
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

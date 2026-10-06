@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Learning Roadmap | Ready for Future{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/learning.css' %}">
+{% endblock %}
+
+{% block content %}
+<section class="learning-page">
+    <div class="learning-heading">
+        <span class="section-label">YOUR LEARNING PLAN</span>
+        <h1>{{ roadmap_type|title }} Roadmap</h1>
+        <p>Follow one small learning step at a time.</p>
+    </div>
+
+    <div class="roadmap-switch">
+        <a href="{% url 'learning:roadmap' %}?track=fresher">Fresher plan</a>
+        <a href="{% url 'learning:roadmap' %}?track=experienced">Experienced plan</a>
+    </div>
+
+    <div class="learning-progress">
+        <p>{{ completed_count }} of {{ total_days }} days completed</p>
+        <div class="learning-progress-track">
+            <div
+                class="learning-progress-bar"
+                data-completed="{{ completed_count }}"
+                data-total="{{ total_days }}">
+            </div>
+        </div>
+    </div>
+
+    <ol class="roadmap-days">
+        {% for day in day_list %}
+            <li class="{% if day.completed %}day-complete{% endif %}">
+                <div>
+                    <span class="day-label">DAY {{ day.number }}</span>
+                    <h2>{{ day.title }}</h2>
+                    {% if day.completed %}
+                        <span class="completed-label">Completed</span>
+                    {% endif %}
+                </div>
+                <a href="{% url 'learning:day' day.number %}?track={{ roadmap_type }}">
+                    {% if day.completed %}Review{% else %}Open day{% endif %}
+                </a>
+            </li>
+        {% endfor %}
+    </ol>
+</section>
+<script src="{% static 'js/learning.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Resume Review | Ready for Future{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/resume.css' %}">
+{% endblock %}
+
+{% block content %}
+<section class="resume-page">
+    <div class="resume-card">
+        <span class="section-label">RESUME REVIEW</span>
+        <h1>Resume Review</h1>
+        <p class="resume-intro">
+            Your PDF is stored. You can download it here:
+            <a class="resume-text-link" href="{% url 'resumes:download' resume.id %}">
+                {{ resume.resume_file.name }}
+            </a>
+        </p>
+
+        {% for message in messages %}
+            <p class="resume-success">{{ message }}</p>
+        {% endfor %}
+
+        <section class="feedback-panel ai-panel">
+            <h2>AI Resume Feedback</h2>
+            <p class="resume-note">
+                Feedback is based on text extracted from this PDF. Your career
+                profile is used only as optional context.
+            </p>
+            <form method="post" class="feedback-form">
+                {% csrf_token %}
+                <button class="primary-button" type="submit">
+                    Get AI Feedback
+                </button>
+            </form>
+            {% if ai_error %}
+                <p class="ai-error" role="alert">{{ ai_error }}</p>
+            {% endif %}
+            {% if ai_feedback %}
+                <div class="resume-feedback">
+                    <section class="feedback-section">
+                        <h3>Overall Feedback</h3>
+                        <p>{{ ai_feedback.overall_feedback }}</p>
+                    </section>
+
+                    <section class="feedback-section">
+                        <h3>Strengths</h3>
+                        <ul>
+                            {% for point in ai_feedback.strengths %}
+                                <li>{{ point }}</li>
+                            {% empty %}
+                                <li>No strengths were returned.</li>
+                            {% endfor %}
+                        </ul>
+                    </section>
+
+                    <section class="feedback-section">
+                        <h3>Areas to Improve</h3>
+                        <ul>
+                            {% for point in ai_feedback.areas_to_improve %}
+                                <li>{{ point }}</li>
+                            {% empty %}
+                                <li>No improvement areas were returned.</li>
+                            {% endfor %}
+                        </ul>
+                    </section>
+
+                    <section class="feedback-section">
+                        <h3>Recommended Actions</h3>
+                        <ul>
+                            {% for point in ai_feedback.recommended_actions %}
+                                <li>{{ point }}</li>
+                            {% empty %}
+                                <li>No recommended actions were returned.</li>
+                            {% endfor %}
+                        </ul>
+                    </section>
+                </div>
+            {% endif %}
+        </section>
+
+        <div class="resume-actions">
+            <a class="primary-button" href="{% url 'resumes:upload' %}">
+                Upload Another Resume
+            </a>
+            <a class="resume-text-link" href="{% url 'resumes:list' %}">
+                See all resumes
+            </a>
+        </div>
+
+    </div>
+</section>
+<script src="{% static 'js/resume.js' %}"></script>
+{% endblock %}
