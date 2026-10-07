@@ -1,160 +1,77 @@
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseRedirect
 from django.shortcuts import redirect, render
-from django.urls import reverse
 
 from career.models import CareerProfile
 
-from .models import LearningProgress
 
-
-ROADMAPS = {
-    'fresher': [
-        {
-            'title': 'Python Basics',
-            'content': 'Learn variables, data types, conditions, loops, and functions.',
-            'task': 'Write a small program that asks for a name and prints a greeting.',
-        },
-        {
-            'title': 'Django Basics',
-            'content': 'Learn how Django projects, apps, URLs, and views fit together.',
-            'task': 'Create a simple view that returns a welcome page.',
-        },
-        {
-            'title': 'SQL Basics',
-            'content': 'Practice SELECT, INSERT, UPDATE, and simple table relationships.',
-            'task': 'Write a query that finds all records matching a condition.',
-        },
-        {
-            'title': 'REST APIs',
-            'content': 'Understand HTTP requests, responses, status codes, and JSON.',
-            'task': 'Sketch the request and response for a simple books endpoint.',
-        },
-        {
-            'title': 'Build a Small Project',
-            'content': 'Combine your skills in a small project and save it with Git.',
-            'task': 'Build a small to-do list and write a README describing it.',
-        },
-    ],
-    'experienced': [
-        {
-            'title': 'Review Core Concepts',
-            'content': 'Refresh language fundamentals and identify one topic to deepen.',
-            'task': 'Explain a core concept from your target role in your own words.',
-        },
-        {
-            'title': 'Design an Application',
-            'content': 'Practice breaking an application into clear, maintainable parts.',
-            'task': 'Draw a simple design for a small application you know.',
-        },
-        {
-            'title': 'Databases and Performance',
-            'content': 'Review query design, indexes, and common performance trade-offs.',
-            'task': 'Find one slow query pattern and describe how you would investigate it.',
-        },
-        {
-            'title': 'APIs and Reliability',
-            'content': 'Review API design, validation, errors, and automated tests.',
-            'task': 'List tests for a create-record API endpoint.',
-        },
-        {
-            'title': 'Portfolio Project',
-            'content': 'Improve a project that demonstrates decisions and results.',
-            'task': 'Document a technical decision and its trade-offs in your project.',
-        },
-    ],
-}
-
-
-def get_roadmap_type(user):
-    try:
-        profile = CareerProfile.objects.get(user=user)
-    except CareerProfile.DoesNotExist:
-        return 'fresher'
-
-    if profile.experience_level == 'fresher':
-        return 'fresher'
-    return 'experienced'
+def _get_profile_skills(profile):
+    if not profile or not profile.skills:
+        return []
+    return [skill.strip() for skill in profile.skills.split(',') if skill.strip()]
 
 
 @login_required
 def roadmap(request):
-    roadmap_type = request.GET.get(
-        'track',
-        get_roadmap_type(request.user)
-    )
-    if roadmap_type not in ROADMAPS:
-        roadmap_type = get_roadmap_type(request.user)
+    try:
+        profile = CareerProfile.objects.get(user=request.user)
+    except CareerProfile.DoesNotExist:
+        profile = None
 
-    days = ROADMAPS[roadmap_type]
-    completed_days = set(
-        LearningProgress.objects.filter(
-            user=request.user,
-            roadmap_type=roadmap_type
-        ).values_list('day_number', flat=True)
-    )
-    day_list = [
-        {
-            'number': number,
-            'title': day['title'],
-            'completed': number in completed_days,
-        }
-        for number, day in enumerate(days, start=1)
-    ]
+    current_skills = _get_profile_skills(profile)
+    target_role = profile.target_role if profile else 'your target role'
+    current_role = profile.current_role if profile else 'Not added yet'
+    experience = profile.get_experience_level_display() if profile else 'Not added yet'
+
+    recommended_skills = current_skills[:]
+    if profile and profile.target_role:
+        target_lower = profile.target_role.lower()
+        if 'cyber' in target_lower or 'security' in target_lower:
+            recommended_skills = [
+                'Vulnerability scanning',
+                'Risk assessment',
+                'Incident response',
+                'Network security',
+                'Threat modeling',
+            ]
+        elif 'data' in target_lower or 'analyst' in target_lower:
+            recommended_skills = [
+                'SQL analysis',
+                'Excel reporting',
+                'Python for data work',
+                'Data visualization',
+                'Business storytelling',
+            ]
+        elif 'python' in target_lower or 'developer' in target_lower:
+            recommended_skills = [
+                'Python testing',
+                'REST APIs',
+                'Django or Flask',
+                'SQL queries',
+                'Debugging and profiling',
+            ]
+        else:
+            recommended_skills = [
+                'Portfolio projects',
+                'Communication and stakeholder feedback',
+                'Role-specific technical skills',
+                'Problem solving',
+                'Continuous learning',
+            ]
 
     return render(
         request,
         'learning/roadmap.html',
         {
-            'roadmap_type': roadmap_type,
-            'day_list': day_list,
-            'completed_count': len(completed_days),
-            'total_days': len(days),
-        }
+            'profile': profile,
+            'target_role': target_role,
+            'current_role': current_role,
+            'experience': experience,
+            'current_skills': current_skills,
+            'recommended_skills': recommended_skills,
+        },
     )
 
 
 @login_required
 def day_detail(request, day_number):
-    roadmap_type = request.GET.get(
-        'track',
-        get_roadmap_type(request.user)
-    )
-    if roadmap_type not in ROADMAPS:
-        roadmap_type = get_roadmap_type(request.user)
-
-    if day_number < 1 or day_number > len(ROADMAPS[roadmap_type]):
-        return redirect('learning:roadmap')
-
-    day = ROADMAPS[roadmap_type][day_number - 1]
-    progress = LearningProgress.objects.filter(
-        user=request.user,
-        roadmap_type=roadmap_type,
-        day_number=day_number
-    )
-    completed = progress.exists()
-
-    if request.method == 'POST':
-        if completed:
-            progress.delete()
-        else:
-            LearningProgress.objects.create(
-                user=request.user,
-                roadmap_type=roadmap_type,
-                day_number=day_number
-            )
-        return HttpResponseRedirect(
-            f'{reverse("learning:day", args=[day_number])}'
-            f'?track={roadmap_type}'
-        )
-
-    return render(
-        request,
-        'learning/day.html',
-        {
-            'day': day,
-            'day_number': day_number,
-            'roadmap_type': roadmap_type,
-            'completed': completed,
-        }
-    )
+    return redirect('learning:roadmap')

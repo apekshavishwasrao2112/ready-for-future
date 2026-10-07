@@ -12,16 +12,31 @@
     <div class="interview-heading">
         <span class="section-label">PRACTICE MODE</span>
         <h1>Try an Answer</h1>
-        <p>Write a practice answer, then reveal a tip to compare your ideas.</p>
+        {% if profile %}
+            <p>Role-specific practice for {{ profile.target_role }}.</p>
+        {% else %}
+            <p>Write a practice answer, then reveal a tip to compare your ideas.</p>
+        {% endif %}
     </div>
+
+    {% if ai_error %}
+        <p class="ai-error" role="alert">
+            {{ ai_error }}
+            {% if not profile %}
+                <a href="{% url 'career:profile' %}">Create your profile</a>
+            {% elif not profile.target_role or not profile.experience_level or not profile.skills %}
+                <a href="{% url 'career:profile' %}">Complete your profile</a>
+            {% endif %}
+        </p>
+    {% endif %}
 
     {% for question in questions %}
         <article class="practice-card">
-            <span class="topic-label">{{ question.get_topic_display }}</span>
+            <span class="topic-label">{{ question.topic }}</span>
             <h2>{{ question.question }}</h2>
-            <label for="answer-{{ question.id }}">Your practice answer</label>
+            <label for="answer-{{ forloop.counter }}">Your practice answer</label>
             <textarea
-                id="answer-{{ question.id }}"
+                id="answer-{{ forloop.counter }}"
                 class="practice-answer"
                 rows="4"
                 placeholder="Write a few points you would mention..."></textarea>
@@ -35,7 +50,9 @@
             <p class="answer-tip" hidden>{{ question.answer_tip }}</p>
         </article>
     {% empty %}
-        <p>No interview questions are available yet.</p>
+        {% if not ai_error %}
+            <p>No practice questions are available yet.</p>
+        {% endif %}
     {% endfor %}
 
     <a class="interview-back" href="{% url 'interview:questions' %}">

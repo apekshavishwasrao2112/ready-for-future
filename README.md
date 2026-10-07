@@ -1,6 +1,6 @@
 # Ready for Future
 
-**Ready for Future – Tech Career** is a Django web application for exploring career direction, learning plans, and interview preparation. Users can create a career profile, upload a PDF resume, and request AI feedback based on the text extracted from that PDF.
+**Ready for Future – Tech Career** is a Django web application for exploring career direction, developing role-relevant skills, and preparing for interviews. Users can create a career profile, upload a PDF resume, and request AI feedback based on the text extracted from that PDF.
 
 ## Project Overview
 
@@ -13,10 +13,10 @@ The project is built as a beginner-friendly Django application. It demonstrates 
 - View a dashboard with profile-based career ideas and optional AI career recommendations.
 - Upload PDF resumes, see a personal resume list, and download only your own files.
 - Extract actual text from an uploaded PDF with PyMuPDF and request structured AI resume feedback.
-- View a fresher or experienced five-day learning roadmap and mark or unmark days as completed.
-- Browse a seeded interview question bank for Python, Django, SQL, JavaScript, and HR.
-- View questions suggested from profile details and generate additional AI interview questions.
-- Practice writing answers and reveal the stored answer tips.
+- View skill-development recommendations informed by the signed-in user's career profile and target role.
+- Generate structured, role-specific technical and HR interview questions with Groq using the signed-in user's CareerProfile.
+- Start Practice to generate role-specific questions through the same AI question flow used by the Interview page.
+- Write answers in practice mode, view a live word count, and reveal an answer tip for each generated question.
 
 ## Technologies
 
@@ -37,13 +37,13 @@ The installed project environment was checked with Django 6.1.1 and Python 3.14.
 
 - **MVT (Model-View-Template):** models represent stored data, views handle requests and prepare data, and templates render pages.
 - **URLs and views:** app URL configurations connect page paths to view functions.
-- **Models and ORM:** `CareerProfile`, `Resume`, `LearningProgress`, and `InterviewQuestion` describe data queried and saved with Django’s ORM.
+- **Models and ORM:** `CareerProfile` and `Resume` support the active profile and resume workflows. `LearningProgress` and `InterviewQuestion` remain in the existing database schema; the former five-day learning roadmap and seeded interview bank are not used by the current Learning or Interview pages.
 - **Forms and ModelForms:** Django’s built-in authentication forms handle registration and login; `CareerProfileForm` and `ResumeForm` map submitted form data to models.
 - **Templates:** Django templates render pages and insert data supplied by views.
 - **Authentication:** Django sessions and `login_required` protect profile, dashboard, resume, learning, and interview pages.
 - **Static and media files:** CSS and JavaScript are served from `static/`; uploaded PDF files are stored in `media/`.
 - **File uploads:** a `FileField` stores each user’s PDF under `media/resumes/`.
-- **Migrations:** migration files create and update database tables, including seeded interview questions.
+- **Migrations:** migration files create and update database tables. An existing migration seeds legacy interview question records, which are not the source for current Interview or Practice questions.
 
 ## Project Structure
 
@@ -127,7 +127,7 @@ ready-for-future/
 │   │   ├── result.html
 │   │   └── upload.html
 │   ├── learning/
-│   │   ├── day.html
+│   │   ├── day.html (legacy template; no active day route)
 │   │   └── roadmap.html
 │   └── interview/
 │       ├── practice.html
@@ -175,6 +175,10 @@ Registration uses Django’s `UserCreationForm` and signs the new user in. Login
 
 The signed-in user opens the profile page and submits `CareerProfileForm`. The view saves or updates the user’s `CareerProfile` through the ORM, then redirects to the dashboard. The dashboard uses profile fields for local career suggestions and can submit a separate request for Groq-generated career recommendations.
 
+### Learning Workflow
+
+The Learning page retrieves the signed-in user's `CareerProfile` and displays current skills and suggested skills based on the target role. It is a skill-development recommendations page; it does not provide the former fixed five-day roadmap, day links, or completion tracking.
+
 ### Resume Upload Workflow
 
 The signed-in user uploads a PDF through `ResumeForm`. Django validates its file extension, associates the `Resume` record with the current user, stores the file under `media/resumes/`, and redirects to its review page. Resume list, review, and download views restrict records to their owner.
@@ -198,6 +202,37 @@ Optional context is limited to target role, current role, and experience level. 
 
 Groq returns four fields: `overall_feedback`, `strengths`, `areas_to_improve`, and `recommended_actions`. Django validates and parses this JSON before passing each field to the result template. Invalid JSON produces a user-friendly error instead of displaying raw JSON.
 
+### Interview and Practice Workflow
+
+Both the Interview page's **Generate AI Questions** action and **Start Practice** use the signed-in user's `CareerProfile`. Django sends these profile fields to Groq:
+
+- Target role
+- Current role
+- Experience level
+- Skills
+
+Groq is asked for structured JSON containing `technical_questions` (each with a question and topic) and `hr_questions` (each with a question). The practice flow uses the same question-generation function as the Interview page and also requests an answer tip for each question.
+
+```text
+User Profile
+  ↓
+CareerProfile
+  ↓
+Target Role + Current Role + Experience + Skills
+  ↓
+Groq AI
+  ↓
+Structured Interview Questions
+  ↓
+Interview Page
+  ↓
+Start Practice
+  ↓
+Role-Specific Practice Questions
+```
+
+Practice mode renders each generated question with a text area for the user's answer, a live word count, and a button to reveal its answer tip. Answers are not saved. The old fixed Django/HR/JavaScript/Python/SQL question list is not used by either the Interview page or Start Practice.
+
 ## Groq and API Key Security
 
 - The Groq key belongs in the local `.env` file as `GROQ_API_KEY=your_key`.
@@ -215,8 +250,8 @@ Application models:
 
 - `CareerProfile` in `career`
 - `Resume` in `resumes`
-- `LearningProgress` in `learning`
-- `InterviewQuestion` in `interview`
+- `LearningProgress` in `learning` (legacy roadmap data; not used by the current Learning page)
+- `InterviewQuestion` in `interview` (legacy seeded records; not used as the current Interview or Practice question source)
 
 Django’s built-in authentication and administration apps also create their own tables.
 
@@ -263,7 +298,7 @@ Open `.env` locally and replace the placeholder with your Groq API key. Never co
 python manage.py migrate
 ```
 
-The repository includes migration files for the application models and seeded interview questions.
+The repository includes migration files for application models. The legacy migration that seeded interview questions remains in the project, but current Interview and Practice questions are generated from the user's profile.
 
 ### 6. Start the development server
 
@@ -288,10 +323,9 @@ Open `http://127.0.0.1:8000/` in a browser.
 | `/resumes/upload/` | Upload a PDF | Yes |
 | `/resumes/<resume_id>/` | Review a resume and request AI feedback | Yes |
 | `/resumes/<resume_id>/file/` | Download an owned resume | Yes |
-| `/learning/` | View fresher or experienced roadmap | Yes |
-| `/learning/day/<day_number>/` | View a roadmap day and toggle completion | Yes |
-| `/interview/` | Browse and generate interview questions | Yes |
-| `/interview/practice/` | Practice answers and reveal tips | Yes |
+| `/learning/` | View profile-informed skill-development recommendations | Yes |
+| `/interview/` | View profile-aligned prompts and request AI-generated technical and HR questions | Yes |
+| `/interview/practice/` | Generate and practice role-specific questions with answers, word counts, and answer tips | Yes |
 | `/admin/` | Django admin | Staff account |
 
 ## How to Use the Application
@@ -300,8 +334,9 @@ Open `http://127.0.0.1:8000/` in a browser.
 2. Create a career profile with your current role, experience, target role, and skills.
 3. Use the dashboard to view career ideas or request AI recommendations.
 4. Upload a PDF from the Resume section. Open its review page and select **Get AI Feedback** to analyze the PDF’s extracted text.
-5. Open the Learning section to choose a roadmap, open a day, and mark it complete.
-6. Open Interview to browse questions, generate AI questions from your profile, or practice an answer and reveal its tip.
+5. Open Learning to review profile-informed skill recommendations for your target role.
+6. Open Interview and select **Generate AI Questions** to receive structured technical and HR questions based on your CareerProfile.
+7. Select **Start Practice** to generate role-specific questions through the same AI question flow. Type answers, check the word count, and reveal answer tips. Answers are not saved.
 
 ## Testing and Verification
 
@@ -310,11 +345,8 @@ The current project state was verified with:
 | Check | Result |
 |---|---|
 | `python manage.py check` | Passed; no system issues |
-| `python manage.py test accounts career resumes learning interview` | Passed; 16 tests |
-| `python manage.py test resumes` | Passed; 8 tests |
-| `python manage.py makemigrations --check --dry-run` | Passed; no pending model changes |
-| Live Groq JSON review using text extracted from a generated sample PDF | Passed; JSON parsed into all four feedback fields |
-| Empty or unreadable PDF behavior | Verified; Groq is not called |
+| `python manage.py test interview.tests` | Passed; 5 interview tests, including role-specific practice generation and profile data passed to Groq |
+| `python manage.py test` | 14 of 17 tests passed; 3 legacy Learning tests still expect the removed fixed roadmap and day URL |
 
 ## Current Limitations
 
@@ -322,8 +354,9 @@ The current project state was verified with:
 - Resume extraction is limited to 10 MB files and 12,000 characters of extracted text.
 - Groq features require a valid API key, internet access, and an available model.
 - AI-generated feedback and recommendations can be imperfect; users should review them critically.
-- Learning roadmaps are fixed five-day examples. Practice answers are not saved or automatically evaluated.
-- Interview AI questions are generated from the profile, while the stored question bank is static.
+- Learning skill suggestions are based on profile details; the page does not include a scheduled roadmap or completion tracker.
+- Practice answers are not saved or automatically evaluated.
+- Interview and Practice question generation requires a valid Groq API key, internet access, and an available model.
 - The current Django settings are for local development, not production deployment.
 
 ## Future Improvements
@@ -346,7 +379,7 @@ The current project state was verified with:
 
 ## Project Explanation
 
-Ready for Future is a Django career-preparation application. A user creates a career profile and can follow a learning roadmap, browse or generate interview questions, and upload a PDF resume. For resume feedback, Django stores the PDF, PyMuPDF extracts its text, and Django sends that text with optional career context to Groq. Groq returns structured JSON, which Django validates and displays as overall feedback, strengths, improvement areas, and recommended actions.
+Ready for Future is a Django career-preparation application. A user creates a career profile to view target-role-informed skill recommendations and generate interview questions based on target role, current role, experience level, and skills. The Interview page and Start Practice share the same Groq question-generation flow. Practice mode provides answer text areas, live word counts, and answer tips; practice answers are not saved. Users can also upload a PDF resume. For resume feedback, Django stores the PDF, PyMuPDF extracts its text, and Django sends that text with optional career context to Groq. Groq returns structured JSON, which Django validates and displays as overall feedback, strengths, improvement areas, and recommended actions.
 
 ## Developed By
 

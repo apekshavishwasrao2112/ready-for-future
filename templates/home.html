@@ -38,11 +38,15 @@ Ready for Future | Tech Career Assistant
                 </a>
             {% endif %}
 
-            <button
-                class="secondary-button"
-                onclick="showProjectInfo()">
-                Explore Platform
-            </button>
+            {% if user.is_authenticated %}
+                <a class="secondary-button" href="{% url 'career:dashboard' %}">
+                    Explore Platform
+                </a>
+            {% else %}
+                <a class="secondary-button" href="{% url 'accounts:login' %}">
+                    Explore Platform
+                </a>
+            {% endif %}
 
         </div>
 
@@ -59,8 +63,8 @@ Ready for Future | Tech Career Assistant
             </div>
 
             <div class="stat">
-                <strong>Daily</strong>
-                <span>Learning Roadmap</span>
+                    <strong>Skills</strong>
+                    <span>Personalized Growth</span>
             </div>
 
         </div>
@@ -132,11 +136,11 @@ Ready for Future | Tech Career Assistant
 
             <div class="feature-icon">🧭</div>
 
-            <h3>Learning Roadmap</h3>
+            <h3>Skill Development</h3>
 
             <p>
-                Follow a structured Day 1, Day 2 and Day 3
-                learning path based on your career goal.
+                Review your profile, identify the next skills to build,
+                and keep progressing toward your target role.
             </p>
 
             <a class="feature-link" href="{% url 'learning:roadmap' %}">
@@ -225,10 +229,10 @@ Ready for Future | Tech Career Assistant
             <div class="roadmap-number">03</div>
 
             <div>
-                <h3>Follow Your Roadmap</h3>
+                <h3>Build Targeted Skills</h3>
                 <p>
-                    Learn through structured daily lessons
-                    and practical tasks.
+                    Focus on the skills that move you toward
+                    your chosen career path.
                 </p>
             </div>
 

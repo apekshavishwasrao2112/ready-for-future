@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Learning Roadmap | Ready for Future{% endblock %}
+{% block title %}Skill Development | Ready for Future{% endblock %}
 
 {% block extra_css %}
     <link rel="stylesheet" href="{% static 'css/learning.css' %}">
@@ -10,43 +10,52 @@
 {% block content %}
 <section class="learning-page">
     <div class="learning-heading">
-        <span class="section-label">YOUR LEARNING PLAN</span>
-        <h1>{{ roadmap_type|title }} Roadmap</h1>
-        <p>Follow one small learning step at a time.</p>
+        <span class="section-label">SKILL DEVELOPMENT</span>
+        <h1>Recommended skills for your profile</h1>
+        <p>Focus on the topics that support {{ target_role }} and your current experience level.</p>
     </div>
 
-    <div class="roadmap-switch">
-        <a href="{% url 'learning:roadmap' %}?track=fresher">Fresher plan</a>
-        <a href="{% url 'learning:roadmap' %}?track=experienced">Experienced plan</a>
-    </div>
-
-    <div class="learning-progress">
-        <p>{{ completed_count }} of {{ total_days }} days completed</p>
-        <div class="learning-progress-track">
-            <div
-                class="learning-progress-bar"
-                data-completed="{{ completed_count }}"
-                data-total="{{ total_days }}">
+    {% if profile %}
+        <div class="dashboard-grid">
+            <div class="dashboard-card">
+                <span class="card-label">TARGET ROLE</span>
+                <h2>{{ profile.target_role }}</h2>
+            </div>
+            <div class="dashboard-card">
+                <span class="card-label">CURRENT ROLE</span>
+                <h2>{{ profile.current_role|default:"Not added yet" }}</h2>
+            </div>
+            <div class="dashboard-card">
+                <span class="card-label">EXPERIENCE</span>
+                <h2>{{ profile.get_experience_level_display }}</h2>
             </div>
         </div>
-    </div>
 
-    <ol class="roadmap-days">
-        {% for day in day_list %}
-            <li class="{% if day.completed %}day-complete{% endif %}">
-                <div>
-                    <span class="day-label">DAY {{ day.number }}</span>
-                    <h2>{{ day.title }}</h2>
-                    {% if day.completed %}
-                        <span class="completed-label">Completed</span>
-                    {% endif %}
-                </div>
-                <a href="{% url 'learning:day' day.number %}?track={{ roadmap_type }}">
-                    {% if day.completed %}Review{% else %}Open day{% endif %}
-                </a>
-            </li>
-        {% endfor %}
-    </ol>
+        <div class="dashboard-card skills-card">
+            <span class="card-label">YOUR CURRENT SKILLS</span>
+            <div class="skills-container">
+                {% for skill in current_skills %}
+                    <span class="skill-tag">{{ skill }}</span>
+                {% empty %}
+                    <p class="skills-note">Add skills to your profile to see personalized recommendations.</p>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="dashboard-card recommendation-card">
+            <span class="card-label">NEXT SKILLS TO BUILD</span>
+            <ul id="career-recommendations">
+                {% for skill in recommended_skills %}
+                    <li>{{ skill }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% else %}
+        <div class="dashboard-card recommendation-card">
+            <span class="card-label">PROFILE REQUIRED</span>
+            <h2>Complete your career profile to see personalized learning recommendations.</h2>
+            <a class="primary-button" href="{% url 'career:profile' %}">Update profile</a>
+        </div>
+    {% endif %}
 </section>
-<script src="{% static 'js/learning.js' %}"></script>
 {% endblock %}

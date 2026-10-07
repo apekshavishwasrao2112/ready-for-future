@@ -12,14 +12,13 @@
     <div class="interview-heading">
         <span class="section-label">INTERVIEW PREPARATION</span>
         <h1>Practice Interview Questions</h1>
-        <p>Browse beginner-friendly questions by topic.</p>
+        <p>Questions tailored to your target role, experience, and skills.</p>
     </div>
 
     <section class="question-group ai-question-panel">
         <h2>Generate questions with AI</h2>
         <p class="interview-note">
-            Groq uses your target role and skills. Your information is sent
-            from Django's server, not directly from the browser.
+            Groq uses your current profile information from Django to generate role-specific questions.
         </p>
         <form method="post">
             {% csrf_token %}
@@ -30,19 +29,39 @@
         {% if ai_error %}
             <p class="ai-error" role="alert">{{ ai_error }}</p>
         {% endif %}
-        {% if ai_questions %}
+        {% if ai_questions.technical_questions or ai_questions.hr_questions %}
             <div class="ai-response">
-                {{ ai_questions|linebreaksbr }}
+                {% if ai_questions.technical_questions %}
+                    <h3>Technical Questions</h3>
+                    <ol class="question-list">
+                        {% for question in ai_questions.technical_questions %}
+                            <li>
+                                <div>{{ question.question }}</div>
+                                {% if question.topic %}
+                                    <small>Topic: {{ question.topic }}</small>
+                                {% endif %}
+                            </li>
+                        {% endfor %}
+                    </ol>
+                {% endif %}
+
+                {% if ai_questions.hr_questions %}
+                    <h3>HR Questions</h3>
+                    <ol class="question-list">
+                        {% for question in ai_questions.hr_questions %}
+                            <li>{{ question.question }}</li>
+                        {% endfor %}
+                    </ol>
+                {% endif %}
             </div>
         {% endif %}
     </section>
 
-    {% if custom_questions %}
+    {% if profile %}
         <section class="question-group">
             <h2>Questions for your profile</h2>
             <p class="interview-note">
-                Suggested using your target role and profile skills
-                ({{ target_role }}). These are simple prompts, not AI-generated.
+                Personalized prompts based on {{ target_role }} and your current skill set.
             </p>
             <ul class="question-list">
                 {% for question in custom_questions %}
@@ -50,36 +69,23 @@
                 {% endfor %}
             </ul>
         </section>
-    {% endif %}
 
-    {% if matching_questions %}
+        {% if matching_questions %}
+            <section class="question-group">
+                <h2>Profile-aligned practice questions</h2>
+                <ul class="question-list">
+                    {% for question in matching_questions %}
+                        <li>{{ question }}</li>
+                    {% endfor %}
+                </ul>
+            </section>
+        {% endif %}
+    {% else %}
         <section class="question-group">
-            <h2>Questions matching your profile</h2>
-            <ul class="question-list">
-                {% for question in matching_questions %}
-                    <li>
-                        <span class="topic-label">{{ question.get_topic_display }}</span>
-                        {{ question.question }}
-                    </li>
-                {% endfor %}
-            </ul>
+            <h2>Profile required</h2>
+            <p>Create your career profile to receive role-specific interview questions.</p>
         </section>
     {% endif %}
-
-    <section class="question-group">
-        <h2>All questions</h2>
-        {% regroup questions by get_topic_display as topic_groups %}
-        {% for group in topic_groups %}
-            <h3>{{ group.grouper }}</h3>
-            <ul class="question-list">
-                {% for question in group.list %}
-                    <li>{{ question.question }}</li>
-                {% endfor %}
-            </ul>
-        {% empty %}
-            <p>No questions are available yet.</p>
-        {% endfor %}
-    </section>
 
     <a class="primary-button interview-action" href="{% url 'interview:practice' %}">
         Start Practice

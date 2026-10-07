@@ -146,9 +146,33 @@ Dashboard | Ready for Future
             {% if career_ai_error %}
                 <p class="ai-error" role="alert">{{ career_ai_error }}</p>
             {% endif %}
-            {% if career_ai_recommendations %}
+            {% if career_ai_recommendations.career_directions or career_ai_recommendations.key_skills_to_improve %}
                 <div class="ai-response">
-                    {{ career_ai_recommendations|linebreaksbr }}
+                    {% if career_ai_recommendations.career_directions %}
+                        <h3>Career directions</h3>
+                        {% for direction in career_ai_recommendations.career_directions %}
+                            <div class="question-card">
+                                <h4>{{ direction.title }}</h4>
+                                <p>{{ direction.why_it_fits }}</p>
+                                {% if direction.skills_to_improve %}
+                                    <ul>
+                                        {% for skill in direction.skills_to_improve %}
+                                            <li>{{ skill }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+
+                    {% if career_ai_recommendations.key_skills_to_improve %}
+                        <h3>Key skills to improve</h3>
+                        <ul>
+                            {% for skill in career_ai_recommendations.key_skills_to_improve %}
+                                <li>{{ skill }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
                 </div>
             {% endif %}
         </div>
@@ -182,8 +206,8 @@ Dashboard | Ready for Future
 
                 <a href="{% url 'learning:roadmap' %}">
                     🧭
-                    <strong>Learning Roadmap</strong>
-                    <p>Follow your personalized plan.</p>
+                    <strong>Skill Development</strong>
+                    <p>Review the next skills to build.</p>
                 </a>
 
                 <a href="{% url 'interview:questions' %}">
