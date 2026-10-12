@@ -39,12 +39,12 @@ Ready for Future | Tech Career Assistant
             {% endif %}
 
             {% if user.is_authenticated %}
-                <a class="secondary-button" href="{% url 'career:dashboard' %}">
-                    Explore Platform
+                <a class="action-link" href="{% url 'career:dashboard' %}">
+                    Explore Platform <span aria-hidden="true">→</span>
                 </a>
             {% else %}
-                <a class="secondary-button" href="{% url 'accounts:login' %}">
-                    Explore Platform
+                <a class="action-link" href="{% url 'accounts:login' %}">
+                    Explore Platform <span aria-hidden="true">→</span>
                 </a>
             {% endif %}
 
@@ -107,8 +107,8 @@ Ready for Future | Tech Career Assistant
                 score, skill analysis, and improvement suggestions.
             </p>
 
-            <a class="feature-link" href="{% url 'resumes:upload' %}">
-                Explore →
+            <a class="feature-link action-link" href="{% url 'resumes:upload' %}">
+                Explore <span aria-hidden="true">→</span>
             </a>
 
         </div>

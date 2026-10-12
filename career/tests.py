@@ -37,3 +37,43 @@ class CareerAiTests(TestCase):
         self.assertIn(self.profile.target_role, prompt)
         self.assertIn(self.profile.get_experience_level_display(), prompt)
         self.assertIn(self.profile.skills, prompt)
+
+
+class CareerButtonLinkTests(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username='navigation-learner',
+            password='test-password-123',
+        )
+        CareerProfile.objects.create(
+            user=self.user,
+            full_name='Navigation Learner',
+            experience_level='fresher',
+            target_role='Software Developer',
+            skills='Python, Django',
+        )
+        self.client.force_login(self.user)
+
+    def test_home_action_links_keep_their_django_destinations(self):
+        response = self.client.get(reverse('career:home'))
+
+        self.assertContains(
+            response,
+            f'href="{reverse("career:dashboard")}"',
+        )
+        self.assertContains(
+            response,
+            f'href="{reverse("resumes:upload")}"',
+        )
+        self.assertContains(response, 'class="feature-link action-link"')
+        self.assertContains(response, 'Explore Platform')
+
+    def test_edit_profile_action_link_keeps_the_profile_destination(self):
+        response = self.client.get(reverse('career:dashboard'))
+
+        self.assertContains(
+            response,
+            f'href="{reverse("career:profile")}"',
+        )
+        self.assertContains(response, 'Edit Profile')
+        self.assertContains(response, 'class="action-link"')

@@ -9,53 +9,215 @@
 
 {% block content %}
 <section class="learning-page">
-    <div class="learning-heading">
+    <header class="learning-heading">
         <span class="section-label">SKILL DEVELOPMENT</span>
-        <h1>Recommended skills for your profile</h1>
-        <p>Focus on the topics that support {{ target_role }} and your current experience level.</p>
-    </div>
+        <h1>Your career preparation dashboard</h1>
+        <p>A practical roadmap based on your saved profile. Work through one focused step at a time.</p>
+    </header>
+
+    <section class="next-action-card" aria-labelledby="next-action-heading">
+        <div>
+            <span class="card-label">RECOMMENDED NEXT STEP</span>
+            <h2 id="next-action-heading">{{ next_action.title }}</h2>
+            <p>{{ next_action.description }}</p>
+        </div>
+        <a class="action-link" href="{{ next_action.href }}">
+            {% if profile %}Open next step{% else %}Complete profile{% endif %}
+            <span aria-hidden="true">→</span>
+        </a>
+    </section>
 
     {% if profile %}
-        <div class="dashboard-grid">
-            <div class="dashboard-card">
-                <span class="card-label">TARGET ROLE</span>
-                <h2>{{ profile.target_role }}</h2>
+        <section class="career-overview" aria-labelledby="career-overview-heading">
+            <div class="learning-section-heading">
+                <div>
+                    <span class="card-label">CAREER PROGRESS OVERVIEW</span>
+                    <h2 id="career-overview-heading">Your preparation checklist</h2>
+                </div>
+                <a class="text-action" href="{% url 'career:profile' %}">Edit career profile <span aria-hidden="true">→</span></a>
             </div>
-            <div class="dashboard-card">
-                <span class="card-label">CURRENT ROLE</span>
-                <h2>{{ profile.current_role|default:"Not added yet" }}</h2>
-            </div>
-            <div class="dashboard-card">
-                <span class="card-label">EXPERIENCE</span>
-                <h2>{{ profile.get_experience_level_display }}</h2>
-            </div>
-        </div>
 
-        <div class="dashboard-card skills-card">
-            <span class="card-label">YOUR CURRENT SKILLS</span>
-            <div class="skills-container">
-                {% for skill in current_skills %}
-                    <span class="skill-tag">{{ skill }}</span>
+            <div class="career-summary-grid">
+                <article class="career-summary-card">
+                    <span class="summary-icon" aria-hidden="true">◎</span>
+                    <span class="card-label">TARGET ROLE</span>
+                    <h3>{{ profile.target_role }}</h3>
+                </article>
+                <article class="career-summary-card">
+                    <span class="summary-icon" aria-hidden="true">↗</span>
+                    <span class="card-label">CURRENT ROLE</span>
+                    <h3>{{ current_role }}</h3>
+                </article>
+                <article class="career-summary-card">
+                    <span class="summary-icon" aria-hidden="true">◷</span>
+                    <span class="card-label">EXPERIENCE</span>
+                    <h3>{{ experience }}</h3>
+                </article>
+            </div>
+
+            <article class="progress-card">
+                <div class="progress-copy">
+                    <div>
+                        <h3>Preparation checklist progress</h3>
+                        <p>{{ completed_task_count }} of {{ total_task_count }} skill and practice tasks complete</p>
+                    </div>
+                    <strong>{{ progress_percentage }}%</strong>
+                </div>
+                <div
+                    class="learning-progress-track"
+                    role="progressbar"
+                    aria-label="Preparation checklist progress"
+                    aria-valuemin="0"
+                    aria-valuemax="100"
+                    aria-valuenow="{{ progress_percentage }}">
+                    <div class="learning-progress-bar" style="width: {{ progress_percentage }}%"></div>
+                </div>
+                <p class="progress-note">Calculated as completed items divided by the checklist items shown below. This tracks practice activity, not job readiness.</p>
+            </article>
+
+            <article class="career-summary-card current-skills-card">
+                <div>
+                    <span class="card-label">SKILLS IN YOUR PROFILE</span>
+                    <p>These saved profile skills are considered when selecting your next learning topics.</p>
+                </div>
+                <div class="skills-container">
+                    {% for skill in current_skills %}
+                        <span class="skill-tag">{{ skill }}</span>
+                    {% empty %}
+                        <span class="skills-note">No skills saved yet. Add some in your <a class="text-action" href="{% url 'career:profile' %}">career profile</a>.</span>
+                    {% endfor %}
+                </div>
+            </article>
+        </section>
+
+        <section class="roadmap-section" aria-labelledby="roadmap-heading">
+            <div class="learning-section-heading">
+                <div>
+                    <span class="card-label">PERSONALIZED SKILL ROADMAP</span>
+                    <h2 id="roadmap-heading">Build skills for {{ profile.target_role }}</h2>
+                    <p>Topics are curated for your role area and filtered against the skills already in your profile.</p>
+                </div>
+            </div>
+
+            <div class="skill-category-list">
+                {% for category in skill_categories %}
+                    <section class="skill-category">
+                        <div class="category-heading">
+                            <span class="category-marker" aria-hidden="true">{{ forloop.counter|stringformat:"02d" }}</span>
+                            <h3>{{ category.name }}</h3>
+                        </div>
+                        <div class="skill-card-grid">
+                            {% for skill in category.skills %}
+                                {% if skill.is_existing %}
+                                    <article class="skill-card existing-skill-card">
+                                        <div class="skill-status status-existing"><span aria-hidden="true">✓</span> Already in your profile</div>
+                                        <h4>{{ skill.skill }}</h4>
+                                        <p>{{ skill.explanation }}</p>
+                                    </article>
+                                {% else %}
+                                    <article class="skill-card{% if skill.completed %} task-complete{% endif %}">
+                                        <div class="skill-card-topline">
+                                            <span class="skill-status{% if skill.completed %} status-complete{% else %} status-pending{% endif %}">
+                                                {% if skill.completed %}<span aria-hidden="true">✓</span> Learning plan complete{% else %}<span aria-hidden="true">○</span> Suggested next{% endif %}
+                                            </span>
+                                            <span class="skill-experience">{{ experience }}</span>
+                                        </div>
+                                        <h4>{{ skill.skill }}</h4>
+                                        <p>{{ skill.explanation }}</p>
+                                        <p class="skill-relevance"><strong>Why it matters:</strong> {{ skill.why }}</p>
+                                        <a class="action-link action-link-secondary" href="#practice-{{ skill.key }}">
+                                            Open practice plan <span aria-hidden="true">↓</span>
+                                        </a>
+                                    </article>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </section>
+                {% endfor %}
+            </div>
+        </section>
+
+        <section class="practice-plans" aria-labelledby="practice-heading">
+            <div class="learning-section-heading">
+                <div>
+                    <span class="card-label">YOUR PRACTICE PLANS</span>
+                    <h2 id="practice-heading">Turn a skill into something you can show</h2>
+                </div>
+            </div>
+            <div class="practice-plan-list">
+                {% for skill in learning_tasks %}
+                    <article class="practice-plan-card{% if skill.completed %} task-complete{% endif %}" id="practice-{{ skill.key }}">
+                        <div class="practice-plan-heading">
+                            <div>
+                                <span class="card-label">{{ skill.category }}</span>
+                                <h3>{{ skill.skill }}</h3>
+                            </div>
+                            <span class="skill-status{% if skill.completed %} status-complete{% else %} status-pending{% endif %}">
+                                {% if skill.completed %}Completed{% else %}Not completed{% endif %}
+                            </span>
+                        </div>
+                        <div class="practice-plan-details">
+                            <div>
+                                <h4>What to learn</h4>
+                                <p>{{ skill.learn }}</p>
+                            </div>
+                            <div>
+                                <h4>Try this practical task</h4>
+                                <p>{{ skill.practice }}</p>
+                            </div>
+                        </div>
+                        <form method="post" action="{% url 'learning:progress' skill.key %}" class="task-progress-form">
+                            {% csrf_token %}
+                            <input type="hidden" name="state" value="{% if skill.completed %}incomplete{% else %}complete{% endif %}">
+                            <button class="task-toggle{% if skill.completed %} task-toggle-complete{% endif %}" type="submit">
+                                {% if skill.completed %}<span aria-hidden="true">↶</span> Mark as not complete{% else %}<span aria-hidden="true">✓</span> Mark learning plan complete{% endif %}
+                            </button>
+                        </form>
+                    </article>
                 {% empty %}
-                    <p class="skills-note">Add skills to your profile to see personalized recommendations.</p>
+                    <p class="empty-roadmap-note">Your listed skill topics are already in your profile. Choose a preparation task below to keep building evidence of your work.</p>
                 {% endfor %}
             </div>
-        </div>
+        </section>
 
-        <div class="dashboard-card recommendation-card">
-            <span class="card-label">NEXT SKILLS TO BUILD</span>
-            <ul id="career-recommendations">
-                {% for skill in recommended_skills %}
-                    <li>{{ skill }}</li>
+        <section class="readiness-section" aria-labelledby="readiness-heading">
+            <div class="learning-section-heading">
+                <div>
+                    <span class="card-label">CAREER READINESS CHECKLIST</span>
+                    <h2 id="readiness-heading">Practice you can discuss with a recruiter</h2>
+                    <p>These are practical preparation activities, not a guaranteed job-readiness score.</p>
+                </div>
+            </div>
+            <div class="readiness-grid">
+                {% for task in readiness_tasks %}
+                    <article class="readiness-card{% if task.completed %} task-complete{% endif %}" id="readiness-{{ task.key }}">
+                        <div class="readiness-card-heading">
+                            <span class="readiness-check{% if task.completed %} readiness-check-done{% endif %}" aria-hidden="true">{% if task.completed %}✓{% else %}{{ forloop.counter }}{% endif %}</span>
+                            <span class="skill-status{% if task.completed %} status-complete{% else %} status-pending{% endif %}">
+                                {% if task.completed %}Completed{% else %}To do{% endif %}
+                            </span>
+                        </div>
+                        <h3>{{ task.title }}</h3>
+                        <p><strong>What this demonstrates:</strong> {{ task.proof }}</p>
+                        <form method="post" action="{% url 'learning:progress' task.key %}" class="task-progress-form">
+                            {% csrf_token %}
+                            <input type="hidden" name="state" value="{% if task.completed %}incomplete{% else %}complete{% endif %}">
+                            <button class="task-toggle{% if task.completed %} task-toggle-complete{% endif %}" type="submit">
+                                {% if task.completed %}<span aria-hidden="true">↶</span> Mark as not complete{% else %}<span aria-hidden="true">✓</span> Mark complete{% endif %}
+                            </button>
+                        </form>
+                    </article>
                 {% endfor %}
-            </ul>
-        </div>
+            </div>
+        </section>
     {% else %}
-        <div class="dashboard-card recommendation-card">
+        <section class="profile-required-card">
+            <span class="summary-icon" aria-hidden="true">◎</span>
             <span class="card-label">PROFILE REQUIRED</span>
-            <h2>Complete your career profile to see personalized learning recommendations.</h2>
-            <a class="primary-button" href="{% url 'career:profile' %}">Update profile</a>
-        </div>
+            <h2>Save your career profile to personalize this dashboard</h2>
+            <p>Add a target role, experience level, and current skills. Your recommendations will use that saved information.</p>
+            <a class="action-link" href="{% url 'career:profile' %}">Set up career profile <span aria-hidden="true">→</span></a>
+        </section>
     {% endif %}
 </section>
 {% endblock %}
