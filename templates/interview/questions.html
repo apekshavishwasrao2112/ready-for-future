@@ -22,7 +22,7 @@
         </p>
         <form method="post">
             {% csrf_token %}
-            <button class="primary-button" type="submit">
+            <button class="btn btn-primary" type="submit">
                 Generate AI Questions
             </button>
         </form>
@@ -87,7 +87,7 @@
         </section>
     {% endif %}
 
-    <a class="primary-button interview-action" href="{% url 'interview:practice' %}">
+    <a class="btn btn-primary" href="{% url 'interview:practice' %}">
         Start Practice
     </a>
 </section>

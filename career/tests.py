@@ -68,6 +68,8 @@ class CareerButtonLinkTests(TestCase):
         self.assertContains(response, 'class="btn btn-primary"')
         self.assertContains(response, 'class="btn btn-secondary"')
         self.assertContains(response, 'Explore Platform')
+        self.assertNotContains(response, 'class="feature-link"')
+        self.assertContains(response, 'href="/static/css/style.css"')
 
     def test_edit_profile_action_link_keeps_the_profile_destination(self):
         response = self.client.get(reverse('career:dashboard'))
@@ -78,6 +80,7 @@ class CareerButtonLinkTests(TestCase):
         )
         self.assertContains(response, 'Edit Profile')
         self.assertContains(response, 'class="btn btn-secondary"')
+        self.assertContains(response, 'class="btn btn-primary"')
 
     def test_primary_application_pages_remain_available(self):
         paths = (
@@ -85,8 +88,10 @@ class CareerButtonLinkTests(TestCase):
             reverse('career:dashboard'),
             reverse('career:profile'),
             reverse('resumes:list'),
+            reverse('resumes:upload'),
             reverse('learning:roadmap'),
             reverse('interview:questions'),
+            reverse('interview:practice'),
         )
 
         for path in paths:

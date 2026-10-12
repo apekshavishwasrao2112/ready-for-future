@@ -31,7 +31,7 @@
             </p>
             <form method="post" class="feedback-form">
                 {% csrf_token %}
-                <button class="primary-button" type="submit">
+                <button class="btn btn-primary" type="submit">
                     Get AI Feedback
                 </button>
             </form>
@@ -82,7 +82,7 @@
         </section>
 
         <div class="resume-actions">
-            <a class="primary-button" href="{% url 'resumes:upload' %}">
+            <a class="btn btn-primary" href="{% url 'resumes:upload' %}">
                 Upload Another Resume
             </a>
             <a class="resume-text-link" href="{% url 'resumes:list' %}">

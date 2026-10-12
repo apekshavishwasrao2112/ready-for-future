@@ -137,11 +137,6 @@
     margin-top: 26px;
 }
 
-.resume-actions .primary-button,
-.feedback-form .primary-button {
-    text-decoration: none;
-}
-
 .resume-list {
     margin: 24px 0;
     list-style: none;

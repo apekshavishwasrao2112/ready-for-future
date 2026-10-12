@@ -88,59 +88,31 @@ body {
 }
 
 
-.nav-button,
-.primary-button {
-    border: none;
-    cursor: pointer;
-
-    padding: 12px 20px;
-
-    border-radius: 10px;
-
-    background: #7c5cff;
-    color: white;
-
-    font-weight: 600;
-
-    transition: 0.3s;
-}
-
-
-.nav-button:hover,
-.primary-button:hover {
-    transform: translateY(-2px);
-    background: #9278ff;
-}
-
-.primary-button {
-    display: inline-block;
-    text-decoration: none;
-}
-
 .btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 9px;
-    min-height: 46px;
-    padding: 11px 20px;
+    gap: 8px;
+    min-height: 44px;
+    padding: 12px 20px;
     border: 1px solid transparent;
     border-radius: 10px;
     font: inherit;
     font-size: 15px;
-    font-weight: 700;
-    line-height: 1.25;
+    font-weight: 600;
+    line-height: 1.2;
     text-align: center;
-    text-decoration: none;
     cursor: pointer;
-    transition: background-color 180ms ease, border-color 180ms ease, color 180ms ease, transform 180ms ease, box-shadow 180ms ease;
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
 }
 
+.btn,
+a.btn,
 a.btn:link,
 a.btn:visited,
 a.btn:hover,
-a.btn:focus,
-a.btn:active {
+a.btn:active,
+a.btn:focus {
     text-decoration: none;
 }
 
@@ -151,37 +123,43 @@ a.btn:active {
 }
 
 .btn-primary:hover {
-    border-color: #9278ff;
-    background: #9278ff;
+    border-color: #6242ec;
+    background: #6242ec;
     color: #ffffff;
     transform: translateY(-2px);
-    box-shadow: 0 7px 18px rgba(87, 62, 196, 0.24);
+    box-shadow: 0 8px 20px rgba(124, 92, 255, 0.25);
 }
 
 .btn-secondary {
-    border-color: #45405f;
-    background: #171525;
-    color: #e5e1f5;
+    border-color: #394152;
+    background: #252b38;
+    color: #ffffff;
 }
 
 .btn-secondary:hover {
-    border-color: #8170ca;
-    background: #24203a;
+    border-color: #454f63;
+    background: #343b4b;
     color: #ffffff;
     transform: translateY(-2px);
 }
 
-.btn:focus-visible,
-.primary-button:focus-visible,
-.secondary-button:focus-visible {
+.btn:focus-visible {
     outline: 3px solid #c2b6ff;
     outline-offset: 3px;
 }
 
-.btn:active {
+.btn-primary:active {
     background: #6848ee;
     border-color: #6848ee;
-    transform: translateY(0) scale(0.98);
+    transform: translateY(0);
+    box-shadow: none;
+}
+
+.btn-secondary:active {
+    background: #252b38;
+    border-color: #394152;
+    color: #ffffff;
+    transform: translateY(0);
     box-shadow: none;
 }
 
@@ -284,28 +262,6 @@ a.btn:active {
 }
 
 
-.secondary-button {
-    padding: 12px 20px;
-
-    border-radius: 10px;
-
-    border: 1px solid #333a48;
-
-    background: transparent;
-
-    color: white;
-
-    cursor: pointer;
-
-    transition: 0.3s;
-}
-
-
-.secondary-button:hover {
-    background: #171c27;
-}
-
-
 .hero-stats {
     display: flex;
 
@@ -384,6 +340,8 @@ a.btn:active {
 
 
 .feature-card {
+    display: flex;
+    flex-direction: column;
     padding: 30px;
 
     background: #10141d;
@@ -426,6 +384,10 @@ a.btn:active {
     margin-bottom: 20px;
 }
 
+.feature-card > .btn {
+    align-self: flex-start;
+    margin-top: auto;
+}
 
 .feature-card button {
     background: none;
@@ -586,7 +548,7 @@ a.btn:active {
         padding: 0 20px;
     }
 
-    .nav-button {
+    .nav-auth .nav-button {
         display: none;
     }
 

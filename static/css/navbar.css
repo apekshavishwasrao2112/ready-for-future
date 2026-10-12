@@ -11,11 +11,6 @@
     flex-shrink: 0;
 }
 
-.nav-button {
-    display: inline-block;
-    text-decoration: none;
-}
-
 @media (max-width: 900px) {
     .nav-links {
         display: flex;

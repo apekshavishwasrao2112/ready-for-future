@@ -23,6 +23,8 @@ class InterviewTests(TestCase):
         response = self.client.get(reverse('interview:questions'))
 
         self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'class="btn btn-primary"')
+        self.assertContains(response, 'static/css/interview.css')
         topics = set(
             InterviewQuestion.objects.values_list('topic', flat=True)
         )
@@ -89,6 +91,7 @@ class InterviewTests(TestCase):
         self.assertNotContains(response, 'What is the difference between a list and a tuple')
         self.assertNotContains(response, 'What is a primary key in a database table?')
         self.assertContains(response, 'Show answer tip')
+        self.assertContains(response, 'class="btn btn-secondary answer-toggle"')
         self.assertContains(response, 'Explain your triage steps.')
         self.assertContains(response, 'class="practice-answer"')
         self.assertContains(response, 'answer-count')

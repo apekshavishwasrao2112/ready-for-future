@@ -32,11 +32,21 @@ class LearningDashboardTests(TestCase):
         self.assertContains(response, 'Python')
         self.assertContains(response, 'REST APIs')
         self.assertContains(response, 'Start Practicing')
+        self.assertContains(response, 'class="btn btn-primary btn-next-step"')
         self.assertContains(response, 'View Learning Plan')
+        self.assertContains(
+            response,
+            'class="btn btn-secondary plan-toggle"',
+        )
+        self.assertContains(
+            response,
+            'class="btn btn-secondary task-save-fallback"',
+        )
         self.assertContains(
             response,
             'data-progress-url="/learning/progress/developer-',
         )
+        self.assertContains(response, 'href="/static/css/style.css"')
         self.assertContains(response, 'static/css/learning.css')
         self.assertContains(response, 'static/js/learning.js')
         self.assertEqual(response.context['total_task_count'], 12)

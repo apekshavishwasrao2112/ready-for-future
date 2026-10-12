@@ -82,6 +82,8 @@ class ResumeTests(TestCase):
 
         response = self.client.get(reverse('resumes:upload'))
         self.assertContains(response, 'Choose PDF')
+        self.assertContains(response, 'class="btn btn-primary"')
+        self.assertContains(response, 'static/css/resume.css')
 
         response = self.client.post(
             reverse('resumes:upload'),
@@ -106,6 +108,7 @@ class ResumeTests(TestCase):
         )
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Resume uploaded successfully.')
+        self.assertContains(response, 'class="btn btn-primary"')
         self.assertNotContains(response, 'Resume Score')
         self.assertNotContains(response, 'Matched Skills')
 
@@ -119,6 +122,7 @@ class ResumeTests(TestCase):
 
         response = self.client.get(reverse('resumes:list'))
         self.assertContains(response, 'resume.pdf')
+        self.assertContains(response, 'class="btn btn-primary"')
 
     def test_upload_rejects_unsupported_file_extension(self):
         self.client.login(
