@@ -8,216 +8,197 @@
 {% endblock %}
 
 {% block content %}
-<section class="learning-page">
-    <header class="learning-heading">
-        <span class="section-label">SKILL DEVELOPMENT</span>
-        <h1>Your career preparation dashboard</h1>
-        <p>A practical roadmap based on your saved profile. Work through one focused step at a time.</p>
+<main class="learning-page" id="learning-dashboard">
+    <header class="learning-header">
+        <div>
+            <span class="section-label">CAREER GROWTH</span>
+            <h1>Skill Development</h1>
+            <p>Build practical skills for your next developer role.</p>
+        </div>
+        {% if profile %}
+            <div class="profile-summary" aria-label="Career profile">
+                <span><small>Target role</small><strong>{{ profile.target_role }}</strong></span>
+                <span><small>Experience</small><strong>{{ experience }}</strong></span>
+                <a class="btn btn-secondary" href="{% url 'career:profile' %}">Edit Profile</a>
+            </div>
+        {% endif %}
     </header>
 
-    <section class="next-action-card" aria-labelledby="next-action-heading">
-        <div>
-            <span class="card-label">RECOMMENDED NEXT STEP</span>
-            <h2 id="next-action-heading">{{ next_action.title }}</h2>
-            <p>{{ next_action.description }}</p>
+    {% if messages %}
+        <div class="learning-messages" aria-live="polite">
+            {% for message in messages %}
+                <p class="learning-message">{{ message }}</p>
+            {% endfor %}
         </div>
-        <a class="action-link" href="{{ next_action.href }}">
-            {% if profile %}Open next step{% else %}Complete profile{% endif %}
-            <span aria-hidden="true">→</span>
-        </a>
-    </section>
+    {% endif %}
+    <p class="learning-feedback" data-learning-feedback role="status" aria-live="polite"></p>
 
-    {% if profile %}
-        <section class="career-overview" aria-labelledby="career-overview-heading">
-            <div class="learning-section-heading">
-                <div>
-                    <span class="card-label">CAREER PROGRESS OVERVIEW</span>
-                    <h2 id="career-overview-heading">Your preparation checklist</h2>
+    {% if profile and next_skill %}
+        <section class="next-step-card" id="next-step" aria-labelledby="next-step-heading">
+            <div class="next-step-copy">
+                <span class="eyebrow">YOUR NEXT STEP</span>
+                <h2 id="next-step-heading">{{ next_skill.title }}</h2>
+                <p>{{ next_skill.why }}</p>
+                <div class="next-exercise" id="next-exercise">
+                    <span class="exercise-label">TRY THIS</span>
+                    <p>{{ next_skill.practice }}</p>
                 </div>
-                <a class="text-action" href="{% url 'career:profile' %}">Edit career profile <span aria-hidden="true">→</span></a>
             </div>
-
-            <div class="career-summary-grid">
-                <article class="career-summary-card">
-                    <span class="summary-icon" aria-hidden="true">◎</span>
-                    <span class="card-label">TARGET ROLE</span>
-                    <h3>{{ profile.target_role }}</h3>
-                </article>
-                <article class="career-summary-card">
-                    <span class="summary-icon" aria-hidden="true">↗</span>
-                    <span class="card-label">CURRENT ROLE</span>
-                    <h3>{{ current_role }}</h3>
-                </article>
-                <article class="career-summary-card">
-                    <span class="summary-icon" aria-hidden="true">◷</span>
-                    <span class="card-label">EXPERIENCE</span>
-                    <h3>{{ experience }}</h3>
-                </article>
-            </div>
-
-            <article class="progress-card">
-                <div class="progress-copy">
-                    <div>
-                        <h3>Preparation checklist progress</h3>
-                        <p>{{ completed_task_count }} of {{ total_task_count }} skill and practice tasks complete</p>
-                    </div>
-                    <strong>{{ progress_percentage }}%</strong>
-                </div>
-                <div
-                    class="learning-progress-track"
-                    role="progressbar"
-                    aria-label="Preparation checklist progress"
-                    aria-valuemin="0"
-                    aria-valuemax="100"
-                    aria-valuenow="{{ progress_percentage }}">
-                    <div class="learning-progress-bar" style="width: {{ progress_percentage }}%"></div>
-                </div>
-                <p class="progress-note">Calculated as completed items divided by the checklist items shown below. This tracks practice activity, not job readiness.</p>
-            </article>
-
-            <article class="career-summary-card current-skills-card">
-                <div>
-                    <span class="card-label">SKILLS IN YOUR PROFILE</span>
-                    <p>These saved profile skills are considered when selecting your next learning topics.</p>
-                </div>
-                <div class="skills-container">
-                    {% for skill in current_skills %}
-                        <span class="skill-tag">{{ skill }}</span>
-                    {% empty %}
-                        <span class="skills-note">No skills saved yet. Add some in your <a class="text-action" href="{% url 'career:profile' %}">career profile</a>.</span>
-                    {% endfor %}
-                </div>
-            </article>
+            <a
+                class="btn btn-primary btn-next-step"
+                href="#next-exercise"
+                data-start-task="{{ next_skill.key }}"
+                data-progress-url="{% url 'learning:progress' next_skill.key %}"
+                data-state="in_progress">
+                Start Practicing <span aria-hidden="true">→</span>
+            </a>
         </section>
-
-        <section class="roadmap-section" aria-labelledby="roadmap-heading">
-            <div class="learning-section-heading">
-                <div>
-                    <span class="card-label">PERSONALIZED SKILL ROADMAP</span>
-                    <h2 id="roadmap-heading">Build skills for {{ profile.target_role }}</h2>
-                    <p>Topics are curated for your role area and filtered against the skills already in your profile.</p>
-                </div>
+    {% elif not profile %}
+        <section class="next-step-card profile-prompt">
+            <div>
+                <span class="eyebrow">GET STARTED</span>
+                <h2>Add your career profile</h2>
+                <p>Save your target role and experience level to personalize this learning dashboard.</p>
             </div>
-
-            <div class="skill-category-list">
-                {% for category in skill_categories %}
-                    <section class="skill-category">
-                        <div class="category-heading">
-                            <span class="category-marker" aria-hidden="true">{{ forloop.counter|stringformat:"02d" }}</span>
-                            <h3>{{ category.name }}</h3>
-                        </div>
-                        <div class="skill-card-grid">
-                            {% for skill in category.skills %}
-                                {% if skill.is_existing %}
-                                    <article class="skill-card existing-skill-card">
-                                        <div class="skill-status status-existing"><span aria-hidden="true">✓</span> Already in your profile</div>
-                                        <h4>{{ skill.skill }}</h4>
-                                        <p>{{ skill.explanation }}</p>
-                                    </article>
-                                {% else %}
-                                    <article class="skill-card{% if skill.completed %} task-complete{% endif %}">
-                                        <div class="skill-card-topline">
-                                            <span class="skill-status{% if skill.completed %} status-complete{% else %} status-pending{% endif %}">
-                                                {% if skill.completed %}<span aria-hidden="true">✓</span> Learning plan complete{% else %}<span aria-hidden="true">○</span> Suggested next{% endif %}
-                                            </span>
-                                            <span class="skill-experience">{{ experience }}</span>
-                                        </div>
-                                        <h4>{{ skill.skill }}</h4>
-                                        <p>{{ skill.explanation }}</p>
-                                        <p class="skill-relevance"><strong>Why it matters:</strong> {{ skill.why }}</p>
-                                        <a class="action-link action-link-secondary" href="#practice-{{ skill.key }}">
-                                            Open practice plan <span aria-hidden="true">↓</span>
-                                        </a>
-                                    </article>
-                                {% endif %}
-                            {% endfor %}
-                        </div>
-                    </section>
-                {% endfor %}
-            </div>
-        </section>
-
-        <section class="practice-plans" aria-labelledby="practice-heading">
-            <div class="learning-section-heading">
-                <div>
-                    <span class="card-label">YOUR PRACTICE PLANS</span>
-                    <h2 id="practice-heading">Turn a skill into something you can show</h2>
-                </div>
-            </div>
-            <div class="practice-plan-list">
-                {% for skill in learning_tasks %}
-                    <article class="practice-plan-card{% if skill.completed %} task-complete{% endif %}" id="practice-{{ skill.key }}">
-                        <div class="practice-plan-heading">
-                            <div>
-                                <span class="card-label">{{ skill.category }}</span>
-                                <h3>{{ skill.skill }}</h3>
-                            </div>
-                            <span class="skill-status{% if skill.completed %} status-complete{% else %} status-pending{% endif %}">
-                                {% if skill.completed %}Completed{% else %}Not completed{% endif %}
-                            </span>
-                        </div>
-                        <div class="practice-plan-details">
-                            <div>
-                                <h4>What to learn</h4>
-                                <p>{{ skill.learn }}</p>
-                            </div>
-                            <div>
-                                <h4>Try this practical task</h4>
-                                <p>{{ skill.practice }}</p>
-                            </div>
-                        </div>
-                        <form method="post" action="{% url 'learning:progress' skill.key %}" class="task-progress-form">
-                            {% csrf_token %}
-                            <input type="hidden" name="state" value="{% if skill.completed %}incomplete{% else %}complete{% endif %}">
-                            <button class="task-toggle{% if skill.completed %} task-toggle-complete{% endif %}" type="submit">
-                                {% if skill.completed %}<span aria-hidden="true">↶</span> Mark as not complete{% else %}<span aria-hidden="true">✓</span> Mark learning plan complete{% endif %}
-                            </button>
-                        </form>
-                    </article>
-                {% empty %}
-                    <p class="empty-roadmap-note">Your listed skill topics are already in your profile. Choose a preparation task below to keep building evidence of your work.</p>
-                {% endfor %}
-            </div>
-        </section>
-
-        <section class="readiness-section" aria-labelledby="readiness-heading">
-            <div class="learning-section-heading">
-                <div>
-                    <span class="card-label">CAREER READINESS CHECKLIST</span>
-                    <h2 id="readiness-heading">Practice you can discuss with a recruiter</h2>
-                    <p>These are practical preparation activities, not a guaranteed job-readiness score.</p>
-                </div>
-            </div>
-            <div class="readiness-grid">
-                {% for task in readiness_tasks %}
-                    <article class="readiness-card{% if task.completed %} task-complete{% endif %}" id="readiness-{{ task.key }}">
-                        <div class="readiness-card-heading">
-                            <span class="readiness-check{% if task.completed %} readiness-check-done{% endif %}" aria-hidden="true">{% if task.completed %}✓{% else %}{{ forloop.counter }}{% endif %}</span>
-                            <span class="skill-status{% if task.completed %} status-complete{% else %} status-pending{% endif %}">
-                                {% if task.completed %}Completed{% else %}To do{% endif %}
-                            </span>
-                        </div>
-                        <h3>{{ task.title }}</h3>
-                        <p><strong>What this demonstrates:</strong> {{ task.proof }}</p>
-                        <form method="post" action="{% url 'learning:progress' task.key %}" class="task-progress-form">
-                            {% csrf_token %}
-                            <input type="hidden" name="state" value="{% if task.completed %}incomplete{% else %}complete{% endif %}">
-                            <button class="task-toggle{% if task.completed %} task-toggle-complete{% endif %}" type="submit">
-                                {% if task.completed %}<span aria-hidden="true">↶</span> Mark as not complete{% else %}<span aria-hidden="true">✓</span> Mark complete{% endif %}
-                            </button>
-                        </form>
-                    </article>
-                {% endfor %}
-            </div>
+            <a class="btn btn-primary" href="{% url 'career:profile' %}">Complete Profile <span aria-hidden="true">→</span></a>
         </section>
     {% else %}
-        <section class="profile-required-card">
-            <span class="summary-icon" aria-hidden="true">◎</span>
-            <span class="card-label">PROFILE REQUIRED</span>
-            <h2>Save your career profile to personalize this dashboard</h2>
-            <p>Add a target role, experience level, and current skills. Your recommendations will use that saved information.</p>
-            <a class="action-link" href="{% url 'career:profile' %}">Set up career profile <span aria-hidden="true">→</span></a>
+        <section class="next-step-card profile-prompt">
+            <div>
+                <span class="eyebrow">ROADMAP COMPLETE</span>
+                <h2>Continue practicing for {{ profile.target_role }}</h2>
+                <p>Your listed skill and practice tasks are complete. Review your project examples before your next interview.</p>
+            </div>
+            <a class="btn btn-primary" href="{% url 'interview:questions' %}">Interview Practice <span aria-hidden="true">→</span></a>
         </section>
     {% endif %}
-</section>
+
+    {% if profile %}
+        <section class="progress-panel" aria-labelledby="progress-heading">
+            <div class="progress-heading">
+                <div>
+                    <span class="eyebrow">MY PROGRESS</span>
+                    <h2 id="progress-heading">Preparation checklist</h2>
+                </div>
+                <strong class="progress-percent" data-progress-percent>{{ progress_percentage }}%</strong>
+            </div>
+            <div
+                class="learning-progress-track"
+                role="progressbar"
+                aria-label="Completed learning and practice tasks"
+                aria-valuemin="0"
+                aria-valuemax="{{ total_task_count }}"
+                aria-valuenow="{{ completed_task_count }}"
+                data-progress-bar>
+                <div class="learning-progress-bar" style="width: {{ progress_percentage }}%"></div>
+            </div>
+            <p class="progress-count"><span data-progress-count>{{ completed_task_count }}</span> of <span data-progress-total>{{ total_task_count }}</span> tasks completed <span class="progress-disclaimer">· Practice activity, not a job-readiness score.</span></p>
+        </section>
+
+        <section class="roadmap-section" id="skill-roadmap" aria-labelledby="roadmap-heading">
+            <div class="section-heading">
+                <div>
+                    <span class="eyebrow">SKILL ROADMAP</span>
+                    <h2 id="roadmap-heading">Core developer skills</h2>
+                </div>
+                <span class="section-count">6 learning plans</span>
+            </div>
+            <div class="skill-grid">
+                {% for skill in skills %}
+                    <article class="skill-card{% if skill.completed %} is-completed{% endif %}" data-skill-card="{{ skill.key }}">
+                        <div class="skill-card-header">
+                            <span class="skill-icon" aria-hidden="true">
+                                {% if forloop.counter == 1 %}⌘{% elif forloop.counter == 2 %}▣{% elif forloop.counter == 3 %}⇄{% elif forloop.counter == 4 %}▤{% elif forloop.counter == 5 %}✓{% else %}↗{% endif %}
+                            </span>
+                            <span class="skill-status status-{{ skill.status }}" data-skill-status>
+                                {% if skill.completed %}Completed{% elif skill.in_progress %}In Progress{% else %}Recommended{% endif %}
+                            </span>
+                        </div>
+                        <h3>{{ skill.title }}</h3>
+                        <p>{{ skill.description }}</p>
+                        <details class="learning-plan" id="plan-{{ skill.key }}">
+                            <summary class="btn btn-secondary plan-toggle" aria-controls="plan-details-{{ skill.key }}">
+                                <span data-plan-label>View Learning Plan</span>
+                                <span class="plan-chevron" aria-hidden="true">⌄</span>
+                            </summary>
+                            <div class="plan-details" id="plan-details-{{ skill.key }}">
+                                <div>
+                                    <h4>Focus</h4>
+                                    <p>{{ skill.focus }}</p>
+                                </div>
+                                <div class="practice-task">
+                                    <h4>Practical task</h4>
+                                    <p>{{ skill.practice }}</p>
+                                </div>
+                                <form
+                                    method="post"
+                                    action="{% url 'learning:progress' skill.key %}"
+                                    class="progress-form"
+                                    data-progress-form
+                                    data-task-key="{{ skill.key }}">
+                                    {% csrf_token %}
+                                    <label class="task-checkbox">
+                                        <input
+                                            type="checkbox"
+                                            name="completed"
+                                            value="1"
+                                            data-task-checkbox
+                                            {% if skill.completed %}checked{% endif %}>
+                                        <span>Mark learning plan complete</span>
+                                    </label>
+                                    <button class="btn btn-secondary task-save-fallback" type="submit">Save progress</button>
+                                </form>
+                            </div>
+                        </details>
+                    </article>
+                {% endfor %}
+            </div>
+        </section>
+
+        <section class="checklist-section" id="practice-checklist" aria-labelledby="checklist-heading">
+            <div class="section-heading">
+                <div>
+                    <span class="eyebrow">PRACTICE CHECKLIST</span>
+                    <h2 id="checklist-heading">Build evidence of your skills</h2>
+                </div>
+                <span class="section-count">6 practical tasks</span>
+            </div>
+            <details class="more-practice">
+                <summary>
+                    <span>More practice tasks</span>
+                    <span class="checklist-summary-count">{{ readiness_tasks|length }} tasks <span aria-hidden="true">⌄</span></span>
+                </summary>
+                <ul class="checklist-list">
+                    {% for task in readiness_tasks %}
+                        <li class="checklist-item{% if task.completed %} is-completed{% endif %}" data-checklist-item="{{ task.key }}">
+                            <form
+                                method="post"
+                                action="{% url 'learning:progress' task.key %}"
+                                class="progress-form checklist-form"
+                                data-progress-form
+                                data-task-key="{{ task.key }}">
+                                {% csrf_token %}
+                                <label class="task-checkbox">
+                                    <input
+                                        type="checkbox"
+                                        name="completed"
+                                        value="1"
+                                        data-task-checkbox
+                                        {% if task.completed %}checked{% endif %}>
+                                    <span>{{ task.title }}</span>
+                                </label>
+                                <span class="checklist-status" data-checklist-status>{% if task.completed %}Completed{% else %}To do{% endif %}</span>
+                                <button class="btn btn-secondary task-save-fallback" type="submit">Save</button>
+                            </form>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </details>
+        </section>
+    {% endif %}
+</main>
+{% endblock %}
+
+{% block extra_js %}
+    <script src="{% static 'js/learning.js' %}" defer></script>
 {% endblock %}

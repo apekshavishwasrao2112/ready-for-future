@@ -65,7 +65,8 @@ class CareerButtonLinkTests(TestCase):
             response,
             f'href="{reverse("resumes:upload")}"',
         )
-        self.assertContains(response, 'class="feature-link action-link"')
+        self.assertContains(response, 'class="btn btn-primary"')
+        self.assertContains(response, 'class="btn btn-secondary"')
         self.assertContains(response, 'Explore Platform')
 
     def test_edit_profile_action_link_keeps_the_profile_destination(self):
@@ -76,4 +77,18 @@ class CareerButtonLinkTests(TestCase):
             f'href="{reverse("career:profile")}"',
         )
         self.assertContains(response, 'Edit Profile')
-        self.assertContains(response, 'class="action-link"')
+        self.assertContains(response, 'class="btn btn-secondary"')
+
+    def test_primary_application_pages_remain_available(self):
+        paths = (
+            reverse('career:home'),
+            reverse('career:dashboard'),
+            reverse('career:profile'),
+            reverse('resumes:list'),
+            reverse('learning:roadmap'),
+            reverse('interview:questions'),
+        )
+
+        for path in paths:
+            with self.subTest(path=path):
+                self.assertEqual(self.client.get(path).status_code, 200)

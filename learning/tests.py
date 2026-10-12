@@ -28,15 +28,22 @@ class LearningDashboardTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, self.profile.target_role)
-        self.assertContains(response, self.profile.current_role)
         self.assertContains(response, 'Fresher')
         self.assertContains(response, 'Python')
-        self.assertContains(response, 'REST API design and backend integration')
+        self.assertContains(response, 'REST APIs')
+        self.assertContains(response, 'Start Practicing')
+        self.assertContains(response, 'View Learning Plan')
+        self.assertContains(
+            response,
+            'data-progress-url="/learning/progress/developer-',
+        )
+        self.assertContains(response, 'static/css/learning.css')
+        self.assertContains(response, 'static/js/learning.js')
         self.assertEqual(response.context['total_task_count'], 12)
         self.assertEqual(response.context['progress_percentage'], 0)
-        self.assertContains(response, 'not job readiness')
+        self.assertContains(response, 'not a job-readiness score')
 
-    def test_profile_skills_are_not_recommended_as_generic_duplicates(self):
+    def test_saved_skills_influence_the_recommended_next_step(self):
         self.profile.target_role = 'Data Analyst'
         self.profile.skills = 'SQL joins, Python, Excel'
         self.profile.save()
@@ -44,11 +51,10 @@ class LearningDashboardTests(TestCase):
         response = self.client.get(self.roadmap_url)
 
         self.assertEqual(response.status_code, 200)
-        self.assertNotIn(
-            'data-sql-analysis',
-            [task['key'] for task in response.context['learning_tasks']],
+        self.assertEqual(
+            response.context['next_skill']['title'],
+            'Python problem-solving',
         )
-        self.assertContains(response, 'Already in your profile')
 
     def test_skill_and_readiness_progress_persist_and_can_be_reopened(self):
         task_key = 'developer-rest-api-design'
@@ -58,7 +64,7 @@ class LearningDashboardTests(TestCase):
 
         self.assertRedirects(
             response,
-            f'{self.roadmap_url}#practice-{task_key}',
+            f'{self.roadmap_url}#skill-roadmap',
             fetch_redirect_response=False,
         )
         self.assertTrue(
@@ -72,7 +78,7 @@ class LearningDashboardTests(TestCase):
         self.assertEqual(refreshed.context['completed_task_count'], 1)
         self.assertEqual(refreshed.context['progress_percentage'], 8)
         completed_task = next(
-            task for task in refreshed.context['learning_tasks']
+            task for task in refreshed.context['skills']
             if task['key'] == task_key
         )
         self.assertTrue(completed_task['completed'])
@@ -84,7 +90,7 @@ class LearningDashboardTests(TestCase):
         )
         self.assertRedirects(
             readiness_response,
-            f'{self.roadmap_url}#readiness-{readiness_key}',
+            f'{self.roadmap_url}#skill-roadmap',
             fetch_redirect_response=False,
         )
         refreshed = self.client.get(self.roadmap_url)
@@ -95,7 +101,7 @@ class LearningDashboardTests(TestCase):
 
         self.assertRedirects(
             response,
-            f'{self.roadmap_url}#practice-{task_key}',
+            f'{self.roadmap_url}#skill-roadmap',
             fetch_redirect_response=False,
         )
         self.assertFalse(
@@ -104,6 +110,50 @@ class LearningDashboardTests(TestCase):
                 task_key=task_key,
             ).exists()
         )
+
+    def test_in_progress_state_is_saved_and_returned_as_json(self):
+        task_key = 'developer-rest-api-design'
+        response = self.client.post(
+            reverse('learning:progress', args=[task_key]),
+            {'state': 'in_progress'},
+            HTTP_ACCEPT='application/json',
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['status'], 'in_progress')
+        self.assertEqual(response.json()['completed'], 0)
+        self.assertEqual(response.json()['total'], 12)
+        self.assertEqual(
+            CareerTaskProgress.objects.get(
+                user=self.user,
+                task_key=task_key,
+            ).status,
+            CareerTaskProgress.IN_PROGRESS,
+        )
+
+    def test_progress_endpoint_enforces_csrf_tokens(self):
+        client = self.client_class(enforce_csrf_checks=True)
+        client.force_login(self.user)
+        client.get(self.roadmap_url)
+        task_url = reverse(
+            'learning:progress',
+            args=['developer-write-tests'],
+        )
+
+        denied = client.post(
+            task_url,
+            {'state': 'completed'},
+            HTTP_ACCEPT='application/json',
+        )
+        accepted = client.post(
+            task_url,
+            {'state': 'completed'},
+            HTTP_ACCEPT='application/json',
+            HTTP_X_CSRFTOKEN=client.cookies['csrftoken'].value,
+        )
+
+        self.assertEqual(denied.status_code, 403)
+        self.assertEqual(accepted.status_code, 200)
 
     def test_users_cannot_change_another_users_progress(self):
         other_user = User.objects.create_user(

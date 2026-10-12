@@ -117,66 +117,75 @@ body {
     text-decoration: none;
 }
 
-.action-link {
+.btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 9px;
-    min-height: 44px;
-    padding: 11px 18px;
-    border: 1px solid #7c5cff;
+    min-height: 46px;
+    padding: 11px 20px;
+    border: 1px solid transparent;
     border-radius: 10px;
-    background: #7c5cff;
-    color: #ffffff;
+    font: inherit;
     font-size: 15px;
     font-weight: 700;
     line-height: 1.25;
     text-align: center;
     text-decoration: none;
-    transition: background-color 180ms ease, border-color 180ms ease, transform 180ms ease, box-shadow 180ms ease;
+    cursor: pointer;
+    transition: background-color 180ms ease, border-color 180ms ease, color 180ms ease, transform 180ms ease, box-shadow 180ms ease;
 }
 
-.action-link:hover {
+a.btn:link,
+a.btn:visited,
+a.btn:hover,
+a.btn:focus,
+a.btn:active {
+    text-decoration: none;
+}
+
+.btn-primary {
+    background: #7c5cff;
+    color: #ffffff;
+    border-color: #7c5cff;
+}
+
+.btn-primary:hover {
     border-color: #9278ff;
     background: #9278ff;
     color: #ffffff;
-    text-decoration: none;
     transform: translateY(-2px);
     box-shadow: 0 7px 18px rgba(87, 62, 196, 0.24);
 }
 
-.action-link:focus-visible,
+.btn-secondary {
+    border-color: #45405f;
+    background: #171525;
+    color: #e5e1f5;
+}
+
+.btn-secondary:hover {
+    border-color: #8170ca;
+    background: #24203a;
+    color: #ffffff;
+    transform: translateY(-2px);
+}
+
+.btn:focus-visible,
 .primary-button:focus-visible,
 .secondary-button:focus-visible {
     outline: 3px solid #c2b6ff;
     outline-offset: 3px;
 }
 
-.action-link:active {
+.btn:active {
     background: #6848ee;
     border-color: #6848ee;
     transform: translateY(0) scale(0.98);
     box-shadow: none;
 }
 
-.action-link-secondary {
-    border-color: #45405f;
-    background: #171525;
-}
-
-.action-link-secondary:hover {
-    border-color: #9278ff;
-    background: #24203a;
-}
-
-.action-link,
-.action-link:hover,
-.action-link:focus,
-.action-link:active {
-    text-decoration: none;
-}
-
-.action-link span[aria-hidden="true"] {
+.btn span[aria-hidden="true"] {
     font-size: 1.1em;
 }
 
@@ -189,7 +198,7 @@ body {
         align-items: stretch;
     }
 
-    .hero-buttons .action-link {
+    .hero-buttons .btn {
         width: 100%;
     }
 }

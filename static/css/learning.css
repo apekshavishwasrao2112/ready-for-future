@@ -1,658 +1,577 @@
 .learning-page {
-    width: min(1120px, 92%);
-    margin: 48px auto 72px;
+    width: min(1120px, calc(100% - 40px));
+    margin: 44px auto 72px;
 }
 
-.learning-heading {
-    max-width: 760px;
-    margin-bottom: 28px;
-}
-
-.learning-heading h1,
-.lesson-card h1 {
-    margin-bottom: 12px;
-    font-size: clamp(32px, 5vw, 46px);
-    line-height: 1.12;
-}
-
-.learning-heading p,
-.lesson-card > p {
-    color: #b0b8c6;
-}
-
-.roadmap-switch {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
-    margin-bottom: 24px;
-}
-
-.roadmap-switch a,
-.learning-back {
-    color: #b3a4ff;
-    text-decoration: none;
-}
-
-.roadmap-switch a {
-    padding: 10px 14px;
-    border: 1px solid #343b48;
-    border-radius: 9px;
-}
-
-.learning-progress,
-.lesson-card,
-.roadmap-days li {
-    padding: 22px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 14px;
-    background: #111621;
-}
-
-.learning-progress p {
-    margin-bottom: 10px;
-}
-
-.learning-progress-track {
-    height: 10px;
-    overflow: hidden;
-    border-radius: 999px;
-    background: #252c3a;
-}
-
-.learning-progress-bar {
-    height: 100%;
-    border-radius: inherit;
-    background: #7c5cff;
-    transition: width 400ms ease;
-}
-
-.roadmap-days {
-    display: grid;
-    gap: 14px;
-    margin-top: 20px;
-    list-style: none;
-}
-
-.roadmap-days li {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 18px;
-}
-
-.roadmap-days li a {
-    color: #b3a4ff;
-    text-decoration: none;
-}
-
-.day-label,
-.completed-label {
-    color: #aab2c0;
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 1px;
-}
-
-.completed-label {
-    color: #8de0a2;
-}
-
-.day-complete {
-    border-color: rgba(141, 224, 162, 0.4) !important;
-}
-
-.lesson-card {
-    display: grid;
-    gap: 20px;
-}
-
-.learning-back {
-    justify-self: start;
-}
-
-.lesson-task {
-    padding: 20px;
-    border-radius: 12px;
-    background: #0b0f18;
-}
-
-.lesson-task h2 {
-    margin-bottom: 8px;
-}
-
-.next-action-card,
-.career-summary-card,
-.progress-card,
-.skill-card,
-.practice-plan-card,
-.readiness-card,
-.profile-required-card {
-    border: 1px solid #252c3a;
-    border-radius: 16px;
-    background: #111621;
-}
-
-.next-action-card {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 24px;
-    margin-bottom: 32px;
-    padding: 24px 28px;
-    border-color: rgba(124, 92, 255, 0.44);
-    background: #141725;
-}
-
-.next-action-card h2 {
-    margin: 4px 0 5px;
-    font-size: clamp(20px, 3vw, 26px);
-}
-
-.next-action-card p,
-.career-summary-card p,
-.skill-card p,
-.practice-plan-card p,
-.readiness-card p,
-.progress-note,
-.learning-section-heading > div > p {
-    color: #b0b8c6;
-}
-
-.next-action-card .action-link {
-    flex-shrink: 0;
-}
-
-.learning-section-heading {
+.learning-header {
     display: flex;
     align-items: flex-end;
     justify-content: space-between;
-    gap: 20px;
-    margin-bottom: 18px;
+    gap: 24px;
+    margin-bottom: 26px;
 }
 
-.learning-section-heading h2 {
-    margin: 3px 0 4px;
-    font-size: clamp(23px, 3vw, 30px);
-    line-height: 1.2;
+.learning-header h1 {
+    margin: 0 0 5px;
+    font-size: clamp(32px, 4vw, 42px);
+    line-height: 1.12;
 }
 
-.learning-section-heading .card-label {
-    color: #a99aff;
+.learning-header > div:first-child > p,
+.profile-summary small {
+    color: #b0b8c6;
+}
+
+.learning-header .section-label {
+    margin-bottom: 10px;
+}
+
+.profile-summary {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding: 12px 14px;
+    border: 1px solid #252c3a;
+    border-radius: 12px;
+    background: #111621;
+}
+
+.profile-summary > span {
+    display: grid;
+    gap: 2px;
+}
+
+.profile-summary small {
+    font-size: 11px;
+}
+
+.profile-summary strong {
+    font-size: 13px;
+}
+
+.profile-summary .btn {
+    min-height: 38px;
+    padding: 8px 12px;
+    font-size: 13px;
+}
+
+.learning-messages:empty,
+.learning-feedback:empty {
+    display: none;
+}
+
+.learning-message,
+.learning-feedback {
+    margin: 0 0 16px;
+    padding: 11px 14px;
+    border: 1px solid rgba(126, 201, 148, 0.38);
+    border-radius: 10px;
+    background: #122119;
+    color: #b2eac0;
+    font-size: 14px;
+}
+
+.learning-feedback.feedback-error {
+    border-color: rgba(255, 140, 140, 0.42);
+    background: #291719;
+    color: #ffc0c0;
+}
+
+.next-step-card,
+.progress-panel,
+.skill-card,
+.more-practice {
+    border: 1px solid #252c3a;
+    border-radius: 15px;
+    background: #111621;
+}
+
+.next-step-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 30px;
+    padding: 25px 27px;
+    border-color: rgba(124, 92, 255, 0.43);
+    background: #141725;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.16);
+}
+
+.next-step-copy {
+    max-width: 760px;
+}
+
+.eyebrow {
+    display: inline-block;
+    color: #b5a7ff;
     font-size: 11px;
     font-weight: 700;
     letter-spacing: 1.5px;
 }
 
-.text-action {
-    color: #c1b5ff;
-    text-decoration: none;
+.next-step-card h2 {
+    margin: 5px 0 7px;
+    font-size: clamp(22px, 3vw, 29px);
+    line-height: 1.2;
+}
+
+.next-step-card > div > p,
+.next-exercise p {
+    color: #c3c9d4;
+    font-size: 14px;
+}
+
+.next-exercise {
+    margin-top: 15px;
+    padding: 13px 15px;
+    border-left: 3px solid #9278ff;
+    border-radius: 0 9px 9px 0;
+    background: #0d111a;
+    scroll-margin-top: 100px;
+}
+
+.exercise-label {
+    display: block;
+    margin-bottom: 3px;
+    color: #a99aff;
+    font-size: 10px;
     font-weight: 700;
+    letter-spacing: 1.1px;
 }
 
-.text-action:hover {
-    color: #ffffff;
-    text-decoration: underline;
-    text-underline-offset: 3px;
+.btn-next-step {
+    flex: 0 0 auto;
 }
 
-.text-action:focus-visible,
-.roadmap-switch a:focus-visible,
-.learning-back:focus-visible {
-    outline: 3px solid #c2b6ff;
-    outline-offset: 3px;
-    border-radius: 4px;
+.profile-prompt > div {
+    max-width: 700px;
 }
 
-.career-overview,
+.progress-panel {
+    margin-top: 20px;
+    padding: 19px 21px;
+}
+
+.progress-heading,
+.section-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+}
+
+.progress-heading {
+    margin-bottom: 12px;
+}
+
+.progress-heading h2,
+.section-heading h2 {
+    margin: 3px 0 0;
+    font-size: 20px;
+    line-height: 1.25;
+}
+
+.progress-percent {
+    color: #c8bdff;
+    font-size: 22px;
+}
+
+.learning-progress-track {
+    height: 9px;
+    overflow: hidden;
+    border-radius: 999px;
+    background: #2a3040;
+}
+
+.learning-progress-bar {
+    height: 100%;
+    border-radius: inherit;
+    background: #9278ff;
+    transition: width 240ms ease;
+}
+
+.progress-count {
+    margin-top: 9px;
+    color: #dfe3eb;
+    font-size: 13px;
+}
+
+.progress-disclaimer {
+    color: #aeb6c4;
+}
+
 .roadmap-section,
-.practice-plans,
-.readiness-section {
-    margin-top: 38px;
+.checklist-section {
+    margin-top: 31px;
 }
 
-.career-summary-grid {
+.section-heading {
+    margin-bottom: 14px;
+}
+
+.section-count {
+    color: #aeb6c4;
+    font-size: 12px;
+}
+
+.skill-grid {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 14px;
 }
 
-.career-summary-card {
-    padding: 20px;
+.skill-card {
+    min-width: 0;
+    padding: 17px;
+    transition: border-color 160ms ease, transform 160ms ease, box-shadow 160ms ease;
 }
 
-.career-summary-card h3 {
-    margin-top: 5px;
-    font-size: 18px;
-    line-height: 1.35;
-    overflow-wrap: anywhere;
+.skill-card:hover {
+    transform: translateY(-2px);
+    border-color: #55458f;
+    box-shadow: 0 9px 20px rgba(0, 0, 0, 0.16);
 }
 
-.career-summary-card .card-label,
-.current-skills-card .card-label,
-.practice-plan-card .card-label,
-.profile-required-card .card-label {
-    color: #a99aff;
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 1.4px;
-}
-
-.summary-icon {
-    display: block;
-    margin-bottom: 8px;
-    color: #b5a7ff;
-    font-size: 23px;
-    line-height: 1;
-}
-
-.progress-card {
-    margin-top: 14px;
-    padding: 21px 22px;
-}
-
-.progress-copy {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 16px;
-    margin-bottom: 13px;
-}
-
-.progress-copy h3 {
-    margin-bottom: 3px;
-    font-size: 17px;
-}
-
-.progress-copy p {
-    color: #b0b8c6;
-    font-size: 14px;
-}
-
-.progress-copy > strong {
-    color: #c1b5ff;
-    font-size: 22px;
-}
-
-.learning-progress-track {
-    height: 11px;
-    overflow: hidden;
-    border-radius: 999px;
-    background: #282e3b;
-}
-
-.learning-progress-bar {
-    background: #9278ff;
-}
-
-.progress-note {
-    margin-top: 11px;
-    font-size: 12px;
-}
-
-.current-skills-card {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    gap: 18px;
-    margin-top: 14px;
-}
-
-.current-skills-card > div:first-child {
-    max-width: 300px;
-}
-
-.current-skills-card p {
-    margin-top: 5px;
-    font-size: 13px;
-}
-
-.skills-container {
-    display: flex;
-    flex: 1;
-    flex-wrap: wrap;
-    align-content: flex-start;
-    justify-content: flex-end;
-    gap: 8px;
-}
-
-.skill-tag {
-    display: inline-flex;
-    align-items: center;
-    min-height: 30px;
-    padding: 5px 10px;
-    border: 1px solid #363247;
-    border-radius: 999px;
-    background: #191725;
-    color: #ddd7ff;
-    font-size: 13px;
-}
-
-.skills-note {
-    color: #b0b8c6;
-    font-size: 13px;
-}
-
-.skill-category-list,
-.practice-plan-list {
-    display: grid;
-    gap: 19px;
-}
-
-.skill-category {
-    padding: 20px;
-    border: 1px solid #202632;
-    border-radius: 16px;
-    background: #0d111a;
-}
-
-.category-heading {
+.skill-card-header {
     display: flex;
     align-items: center;
+    justify-content: space-between;
     gap: 12px;
-    margin-bottom: 15px;
+    margin-bottom: 11px;
 }
 
-.category-heading h3 {
-    font-size: 18px;
-}
-
-.category-marker {
+.skill-icon {
     display: grid;
-    width: 34px;
-    height: 34px;
-    flex: 0 0 34px;
+    width: 32px;
+    height: 32px;
     place-items: center;
-    border-radius: 10px;
+    border-radius: 9px;
     background: #211c3a;
     color: #c6baff;
-    font-size: 12px;
+    font-size: 16px;
     font-weight: 700;
-}
-
-.skill-card-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
-    gap: 12px;
-}
-
-.skill-card {
-    padding: 18px;
-    transition: border-color 180ms ease, transform 180ms ease;
-}
-
-.skill-card:hover,
-.practice-plan-card:hover,
-.readiness-card:hover {
-    border-color: #55458f;
-    transform: translateY(-2px);
-}
-
-.skill-card-topline,
-.practice-plan-heading,
-.readiness-card-heading {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
 }
 
 .skill-status {
     display: inline-flex;
     align-items: center;
     gap: 5px;
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 700;
+    white-space: nowrap;
 }
 
-.status-existing,
-.status-complete {
-    color: #8de0a2;
-}
-
-.status-pending {
+.status-recommended {
     color: #e4c47e;
 }
 
-.skill-experience {
-    color: #aab2c0;
-    font-size: 11px;
+.status-in_progress {
+    color: #b5a7ff;
 }
 
-.skill-card h4 {
-    margin: 12px 0 7px;
-    font-size: 18px;
+.status-completed {
+    color: #8de0a2;
+}
+
+.skill-card h3 {
+    margin: 0 0 6px;
+    font-size: 17px;
     line-height: 1.3;
 }
 
-.skill-card p {
-    margin-bottom: 10px;
+.skill-card > p {
+    min-height: 42px;
+    margin: 0 0 14px;
+    color: #b0b8c6;
     font-size: 13px;
+    line-height: 1.55;
 }
 
-.skill-card .skill-relevance {
-    color: #d1d5df;
+.learning-plan {
+    border-top: 1px solid #282f3d;
+    padding-top: 12px;
 }
 
-.skill-card .action-link {
-    margin-top: 3px;
-    font-size: 13px;
+.learning-plan summary {
+    list-style: none;
 }
 
-.existing-skill-card {
-    border-style: dashed;
-    background: #10151c;
+.learning-plan summary::-webkit-details-marker,
+.more-practice summary::-webkit-details-marker {
+    display: none;
 }
 
-.existing-skill-card h4 {
-    margin-top: 9px;
-}
-
-.practice-plan-card {
-    padding: 22px;
-    scroll-margin-top: 100px;
-    transition: border-color 180ms ease, transform 180ms ease;
-}
-
-.practice-plan-heading {
-    align-items: flex-start;
-    margin-bottom: 18px;
-}
-
-.practice-plan-heading h3 {
-    margin-top: 4px;
-    font-size: 21px;
-}
-
-.practice-plan-details {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 14px;
-}
-
-.practice-plan-details > div {
-    padding: 16px;
-    border-radius: 11px;
-    background: #0a0e16;
-}
-
-.practice-plan-details h4 {
-    margin-bottom: 5px;
-    font-size: 14px;
-}
-
-.practice-plan-details p {
-    font-size: 13px;
-}
-
-.task-progress-form {
-    margin-top: 16px;
-}
-
-.task-toggle {
+.learning-plan > summary.btn {
+    display: flex;
+    width: 100%;
     min-height: 40px;
-    padding: 9px 14px;
-    border: 1px solid #7c5cff;
-    border-radius: 9px;
-    background: #211b3a;
-    color: #e5dfff;
-    cursor: pointer;
-    font: inherit;
+    justify-content: space-between;
+    padding: 8px 11px;
     font-size: 13px;
-    font-weight: 700;
-    transition: background-color 180ms ease, border-color 180ms ease, transform 180ms ease;
+    cursor: pointer;
 }
 
-.task-toggle:hover {
-    border-color: #a394ff;
-    background: #302654;
-    transform: translateY(-1px);
+.plan-chevron {
+    transition: transform 160ms ease;
 }
 
-.task-toggle:focus-visible {
+.learning-plan[open] .plan-chevron,
+.more-practice[open] .checklist-summary-count > span {
+    transform: rotate(180deg);
+}
+
+.plan-details {
+    display: grid;
+    gap: 11px;
+    padding: 14px 2px 1px;
+}
+
+.plan-details h4 {
+    margin: 0 0 3px;
+    color: #edf0f6;
+    font-size: 12px;
+}
+
+.plan-details p {
+    margin: 0;
+    color: #b0b8c6;
+    font-size: 12px;
+    line-height: 1.55;
+}
+
+.progress-form {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    margin-top: 3px;
+}
+
+.task-checkbox {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    min-height: 30px;
+    color: #dce1e8;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.task-checkbox input {
+    width: 17px;
+    height: 17px;
+    margin: 0;
+    accent-color: #8b73ff;
+    cursor: pointer;
+}
+
+.task-checkbox input:focus-visible {
     outline: 3px solid #c2b6ff;
     outline-offset: 3px;
 }
 
-.task-toggle:active {
-    transform: scale(0.98);
+.progress-form [disabled] {
+    cursor: progress;
+    opacity: 0.65;
 }
 
-.task-toggle-complete {
-    border-color: #386c4a;
-    background: #14271b;
-    color: #a8e6b5;
+.task-save-fallback {
+    min-height: 32px;
+    padding: 6px 10px;
+    font-size: 11px;
 }
 
-.empty-roadmap-note {
-    padding: 18px;
-    border: 1px dashed #363247;
-    border-radius: 12px;
+.js-enabled .task-save-fallback {
+    display: none;
+}
+
+.checklist-section .section-heading {
+    margin-bottom: 12px;
+}
+
+.more-practice {
+    overflow: hidden;
+}
+
+.more-practice > summary {
+    display: flex;
+    min-height: 53px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 13px 17px;
+    color: #f4f7fb;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 700;
+    list-style: none;
+}
+
+.more-practice > summary:focus-visible {
+    outline: 3px solid #c2b6ff;
+    outline-offset: -3px;
+}
+
+.checklist-summary-count {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
     color: #b0b8c6;
+    font-size: 12px;
+    font-weight: 400;
 }
 
-.readiness-grid {
+.checklist-summary-count > span {
+    display: inline-block;
+    transition: transform 160ms ease;
+}
+
+.checklist-list {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 14px;
+    gap: 0 20px;
+    padding: 0 17px 12px;
+    border-top: 1px solid #252c3a;
+    list-style: none;
 }
 
-.readiness-card {
-    padding: 19px;
-    scroll-margin-top: 100px;
-    transition: border-color 180ms ease, transform 180ms ease;
+.checklist-item {
+    min-width: 0;
+    padding: 11px 0;
+    border-bottom: 1px solid #252c3a;
 }
 
-.readiness-check {
-    display: grid;
-    width: 32px;
-    height: 32px;
-    place-items: center;
-    border: 1px solid #51596a;
-    border-radius: 50%;
-    color: #c1b5ff;
-    font-size: 13px;
-    font-weight: 700;
+.checklist-form {
+    justify-content: space-between;
+    margin: 0;
 }
 
-.readiness-check-done {
-    border-color: #4d9a65;
-    background: #14271b;
-    color: #a8e6b5;
-}
-
-.readiness-card h3 {
-    margin: 14px 0 7px;
-    font-size: 17px;
-}
-
-.readiness-card p {
+.checklist-form .task-checkbox {
+    flex: 1;
     font-size: 13px;
 }
 
-.readiness-card p strong {
-    color: #e6e9ef;
+.checklist-status {
+    flex: 0 0 70px;
+    color: #e4c47e;
+    font-size: 11px;
+    text-align: right;
 }
 
-.task-complete {
-    border-color: rgba(100, 176, 120, 0.55);
+.checklist-item.is-completed .checklist-status {
+    color: #8de0a2;
+}
+
+.checklist-item.is-completed .task-checkbox span {
+    color: #9ed8aa;
+}
+
+.learning-page a.btn,
+.learning-page a.btn:link,
+.learning-page a.btn:visited,
+.learning-page a.btn:hover,
+.learning-page a.btn:focus,
+.learning-page a.btn:active,
+.learning-page button.btn {
+    text-decoration: none;
+}
+
+.learning-page .btn:focus-visible {
+    outline: 3px solid #c2b6ff;
+    outline-offset: 3px;
+}
+
+.learning-page .btn:active {
+    transform: translateY(0) scale(0.98);
+}
+
+.learning-page a.btn:focus-visible,
+.learning-page button.btn:focus-visible {
+    outline-offset: 3px;
 }
 
 .profile-required-card {
-    max-width: 720px;
-    margin: 24px auto;
-    padding: 30px;
-    text-align: center;
+    padding: 24px;
+    border: 1px solid #252c3a;
+    border-radius: 15px;
+    background: #111621;
 }
 
-.profile-required-card h2 {
-    margin: 5px 0 8px;
-}
+@media (max-width: 900px) {
+    .learning-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
 
-.profile-required-card p {
-    max-width: 560px;
-    margin: 0 auto 20px;
-    color: #b0b8c6;
-}
+    .profile-summary {
+        width: 100%;
+        justify-content: space-between;
+    }
 
-.profile-required-card .action-link {
-    margin-top: 4px;
+    .skill-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
 }
 
 @media (max-width: 600px) {
     .learning-page {
-        width: min(100% - 28px, 1120px);
-        margin: 32px auto 48px;
+        width: calc(100% - 28px);
+        margin: 30px auto 48px;
     }
 
-    .roadmap-days li {
-        align-items: flex-start;
-        flex-direction: column;
+    .profile-summary {
+        flex-wrap: wrap;
+        gap: 12px;
     }
 
-    .next-action-card,
-    .current-skills-card {
+    .profile-summary > span {
+        flex: 1 1 115px;
+    }
+
+    .next-step-card {
         align-items: stretch;
         flex-direction: column;
-        padding: 20px;
+        gap: 17px;
+        padding: 19px;
     }
 
-    .next-action-card .action-link {
-        align-self: flex-start;
+    .next-step-card .btn {
+        width: 100%;
     }
 
-    .career-summary-grid,
-    .practice-plan-details,
-    .readiness-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .learning-section-heading,
-    .practice-plan-heading {
-        align-items: flex-start;
-        flex-direction: column;
-    }
-
-    .current-skills-card .skills-container {
-        justify-content: flex-start;
-    }
-
-    .skill-category {
+    .progress-panel {
         padding: 16px;
     }
 
-    .progress-card,
-    .practice-plan-card,
-    .readiness-card {
-        padding: 18px;
+    .progress-disclaimer {
+        display: block;
+        margin-top: 2px;
+    }
+
+    .skill-grid,
+    .checklist-list {
+        grid-template-columns: 1fr;
+    }
+
+    .skill-card > p {
+        min-height: 0;
+    }
+
+    .section-heading {
+        align-items: flex-start;
+    }
+
+    .section-count {
+        padding-top: 5px;
+        text-align: right;
     }
 }
 
 @media (prefers-reduced-motion: reduce) {
     .learning-progress-bar,
     .skill-card,
-    .practice-plan-card,
-    .readiness-card,
-    .task-toggle {
+    .plan-chevron,
+    .checklist-summary-count > span {
         transition: none;
     }
 }

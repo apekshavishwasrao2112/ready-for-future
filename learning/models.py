@@ -35,12 +35,24 @@ class LearningProgress(models.Model):
 
 
 class CareerTaskProgress(models.Model):
+    IN_PROGRESS = 'in_progress'
+    COMPLETED = 'completed'
+    STATUS_CHOICES = [
+        (IN_PROGRESS, 'In progress'),
+        (COMPLETED, 'Completed'),
+    ]
+
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         related_name='career_task_progress'
     )
     task_key = models.CharField(max_length=100)
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default=COMPLETED,
+    )
     completed_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -52,4 +64,4 @@ class CareerTaskProgress(models.Model):
         ]
 
     def __str__(self):
-        return f'{self.user.username}: completed {self.task_key}'
+        return f'{self.user.username}: {self.status} {self.task_key}'
