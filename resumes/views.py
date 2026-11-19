@@ -6,7 +6,6 @@ from django.contrib import messages
 from django.http import FileResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from groq import GroqError
-import pymupdf
 
 from career.models import CareerProfile
 from config.groq_helper import (
@@ -36,19 +35,23 @@ def extract_resume_text(resume):
         raise ResumeTextError('This PDF is too large. Please upload a smaller file.')
 
     try:
+        from pypdf import PdfReader
+        from pypdf.errors import PdfReadError
+    except ImportError:
+        raise ResumeTextError(
+            'PDF text extraction is currently unavailable. '
+            'Please contact the site administrator.'
+        ) from None
+
+    try:
         with resume.resume_file.open('rb') as pdf_file:
-            with pymupdf.open(stream=pdf_file.read(), filetype='pdf') as pdf:
-                text = ''
-                for page in pdf:
-                    text += page.get_text('text')
-                    if len(text) >= MAX_RESUME_TEXT_LENGTH:
-                        break
-    except (
-        pymupdf.FileDataError,
-        pymupdf.EmptyFileError,
-        RuntimeError,
-        ValueError,
-    ):
+            pdf = PdfReader(pdf_file, strict=False)
+            text = ''
+            for page in pdf.pages:
+                text += page.extract_text() or ''
+                if len(text) >= MAX_RESUME_TEXT_LENGTH:
+                    break
+    except (PdfReadError, RuntimeError, ValueError):
         raise ResumeTextError(
             'Could not read this PDF. Please upload a valid, text-based PDF resume.'
         ) from None

@@ -14,15 +14,53 @@ from .models import Resume
 
 class ResumeTests(TestCase):
     def make_pdf(self, text):
-        import pymupdf
+        escaped_text = (
+            text.replace('\\', '\\\\')
+            .replace('(', '\\(')
+            .replace(')', '\\)')
+            .replace('\n', r'\n')
+            .replace('\r', r'\r')
+        )
+        content = (
+            f'BT /F1 12 Tf 72 720 Td ({escaped_text}) Tj ET'
+        ).encode('ascii')
+        objects = [
+            b'<< /Type /Catalog /Pages 2 0 R >>',
+            b'<< /Type /Pages /Kids [3 0 R] /Count 1 >>',
+            (
+                b'<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] '
+                b'/Resources << /Font << /F1 4 0 R >> >> /Contents 5 0 R >>'
+            ),
+            b'<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>',
+            (
+                f'<< /Length {len(content)} >>\n'.encode('ascii')
+                + b'stream\n'
+                + content
+                + b'\nendstream'
+            ),
+        ]
+        pdf = bytearray(b'%PDF-1.4\n')
+        offsets = [0]
+        for object_number, obj in enumerate(objects, start=1):
+            offsets.append(len(pdf))
+            pdf.extend(
+                f'{object_number} 0 obj\n'.encode('ascii')
+                + obj
+                + b'\nendobj\n'
+            )
 
-        pdf = pymupdf.open()
-        page = pdf.new_page()
-        if text:
-            page.insert_text((72, 72), text)
-        pdf_bytes = pdf.tobytes()
-        pdf.close()
-        return pdf_bytes
+        xref_offset = len(pdf)
+        pdf.extend(f'xref\n0 {len(objects) + 1}\n'.encode('ascii'))
+        pdf.extend(b'0000000000 65535 f \n')
+        for offset in offsets[1:]:
+            pdf.extend(f'{offset:010d} 00000 n \n'.encode('ascii'))
+        pdf.extend(
+            (
+                f'trailer\n<< /Size {len(objects) + 1} /Root 1 0 R >>\n'
+                f'startxref\n{xref_offset}\n%%EOF\n'
+            ).encode('ascii')
+        )
+        return bytes(pdf)
 
     def setUp(self):
         self.media_dir = tempfile.mkdtemp()
@@ -144,6 +182,27 @@ class ResumeTests(TestCase):
             self.assertEqual(response.status_code, 200)
             self.assertContains(response, 'File extension')
         self.assertFalse(Resume.objects.filter(user=self.user).exists())
+
+    def test_pdf_processing_shows_error_when_pypdf_is_unavailable(self):
+        resume = Resume.objects.create(
+            user=self.user,
+            resume_file=SimpleUploadedFile(
+                'resume.pdf',
+                b'PDF contents'
+            )
+        )
+        self.client.force_login(self.user)
+
+        with patch.dict('sys.modules', {'pypdf': None}):
+            response = self.client.post(
+                reverse('resumes:result', args=[resume.id])
+            )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(
+            response,
+            'PDF text extraction is currently unavailable.'
+        )
 
     @patch('resumes.views.get_groq_response')
     def test_ai_feedback_uses_extracted_pdf_text(self, groq_response):
