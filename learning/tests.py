@@ -38,6 +38,16 @@ class LearningDashboardTests(TestCase):
             response,
             'class="btn btn-secondary plan-toggle"',
         )
+        self.assertEqual(
+            response.content.count(
+                b'class="btn btn-secondary plan-toggle" aria-controls='
+            ),
+            6,
+        )
+        self.assertContains(
+            response,
+            'Create a user-owned endpoint with validation',
+        )
         self.assertContains(
             response,
             'class="btn btn-secondary task-save-fallback"',
@@ -46,7 +56,7 @@ class LearningDashboardTests(TestCase):
             response,
             'data-progress-url="/learning/progress/developer-',
         )
-        self.assertContains(response, 'href="/static/css/style.css"')
+        self.assertContains(response, 'href="/static/css/style.css?v=20261119.1"')
         self.assertContains(response, 'static/css/learning.css')
         self.assertContains(response, 'static/js/learning.js')
         self.assertEqual(response.context['total_task_count'], 12)

@@ -130,7 +130,12 @@ def parse_json_response(response_text):
         return _fallback_markdown_to_json(cleaned)
 
 
-def get_groq_response(system_prompt, user_prompt, json_mode=False):
+def get_groq_response(
+    system_prompt,
+    user_prompt,
+    json_mode=False,
+    max_completion_tokens=900,
+):
     api_key = os.getenv('GROQ_API_KEY')
     if not api_key:
         raise GroqConfigurationError(
@@ -145,7 +150,7 @@ def get_groq_response(system_prompt, user_prompt, json_mode=False):
             {'role': 'user', 'content': user_prompt},
         ],
         'temperature': 0.4,
-        'max_completion_tokens': 900,
+        'max_completion_tokens': max_completion_tokens,
     }
     if json_mode:
         request['response_format'] = {'type': 'json_object'}

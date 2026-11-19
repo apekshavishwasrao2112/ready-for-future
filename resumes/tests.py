@@ -1,3 +1,4 @@
+import json
 import shutil
 import tempfile
 from unittest.mock import patch
@@ -206,12 +207,69 @@ class ResumeTests(TestCase):
 
     @patch('resumes.views.get_groq_response')
     def test_ai_feedback_uses_extracted_pdf_text(self, groq_response):
-        groq_response.return_value = (
-            '{"overall_feedback":"Clear experience summary.",'
-            '"strengths":["Python project described."],'
-            '"areas_to_improve":["Add project outcomes."],'
-            '"recommended_actions":["Add measurable results."]}'
-        )
+        groq_response.return_value = json.dumps({
+            'overall_assessment': 'Clear experience summary.',
+            'recruiter_first_impression': (
+                'The project work is easy to spot. '
+                '<img src=x onerror=alert(1)>'
+            ),
+            'target_role_fit': 'Relevant to the entry-level Python role.',
+            'strengths': ['Python project described.'],
+            'weaknesses': ['Add project outcomes.'],
+            'areas_to_improve': ['Add project outcomes.'],
+            'recommended_actions': ['Add measurable results.'],
+            'section_analysis': [{
+                'section': 'Projects',
+                'present': True,
+                'what_is_good': 'The project names Django.',
+                'what_is_missing': 'The user impact is not described.',
+                'improvements': ['Explain what the API does.'],
+            }],
+            'bullet_improvements': [{
+                'original_bullet': 'Built a Django project that serves a REST API.',
+                'problem': 'The purpose could be clearer.',
+                'improved_bullet': 'Built a Django REST API for a defined use case.',
+                'why_stronger': 'It names the service and its purpose.',
+                'metrics_to_verify': ['Record the number of endpoints if known.'],
+            }],
+            'ats_keywords': {
+                'present': ['Python', 'Django'],
+                'missing': ['Automated testing'],
+                'recommend_if_truthful': ['pytest'],
+                'skills_to_highlight': ['REST APIs'],
+            },
+            'project_analysis': [{
+                'project': 'Django REST API',
+                'strengths': ['Relevant framework experience.'],
+                'technologies': ['Django', 'Python'],
+                'missing': ['A clear project outcome.'],
+                'improvements': ['Describe one user workflow.'],
+                'recommended_features': ['Add request validation tests.'],
+                'rewritten_description': 'Built and tested a Django REST API.',
+            }],
+            'summary_versions': {
+                'technical': 'Python developer with Django project experience.',
+                'project_focused': 'Built a Django API as a portfolio project.',
+                'fresher_job_focused': 'Entry-level candidate focused on Python.',
+            },
+            'skill_recommendations': {
+                'high_priority': [{'skill': 'Testing', 'why': 'Validate API behavior.'}],
+                'medium_priority': [],
+                'optional_future': [],
+            },
+            'recruiter_perspective': {
+                'strongest': 'The resume includes a role-relevant project.',
+                'concerns': ['The project outcome is unclear.'],
+                'missing_information': [],
+                'rejection_risks': [],
+                'shortlisting_actions': ['Clarify the project outcome.'],
+            },
+            'action_plan': {
+                'immediate': ['Add a clear project purpose.'],
+                'before_applying': ['Check role-specific keywords.'],
+                'long_term': ['Add a second tested project.'],
+            },
+        })
         profile = CareerProfile.objects.create(
             user=self.user,
             full_name='Resume Learner',
@@ -240,6 +298,14 @@ class ResumeTests(TestCase):
         self.assertContains(response, 'Clear experience summary.')
         self.assertContains(response, 'Python project described.')
         self.assertContains(response, 'Recommended Actions')
+        self.assertContains(response, 'Section-by-section analysis')
+        self.assertContains(response, 'ATS keyword analysis')
+        self.assertContains(response, 'Bullet point improvements')
+        self.assertContains(response, 'What a recruiter may notice')
+        self.assertContains(response, 'Prioritized improvement plan')
+        self.assertContains(response, 'Python developer with Django project experience.')
+        self.assertContains(response, '&lt;img src=x onerror=alert(1)&gt;')
+        self.assertNotContains(response, '<img src=x onerror=alert(1)>')
         prompt = groq_response.call_args.args[1]
         self.assertIn(profile.target_role, prompt)
         self.assertIn(profile.current_role, prompt)
@@ -249,6 +315,10 @@ class ResumeTests(TestCase):
         )
         self.assertNotIn(profile.skills, prompt)
         self.assertTrue(groq_response.call_args.kwargs['json_mode'])
+        self.assertEqual(
+            groq_response.call_args.kwargs['max_completion_tokens'],
+            4800,
+        )
         self.assertNotIn('score', response.context)
         self.assertNotIn('matched_skills', response.context)
         self.assertNotIn('missing_skills', response.context)

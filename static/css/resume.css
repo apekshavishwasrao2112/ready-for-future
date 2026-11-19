@@ -183,3 +183,389 @@
         flex-direction: column;
     }
 }
+
+.resume-panel-heading,
+.resume-section-heading {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.resume-panel-heading h2 {
+    margin: 3px 0 0;
+    font-size: 24px;
+}
+
+.resume-panel-heading .eyebrow,
+.resume-section-heading .eyebrow {
+    color: #b5a7ff;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+}
+
+.review-source {
+    color: #9da7b7;
+    font-size: 11px;
+}
+
+.feedback-form .btn[disabled] {
+    cursor: progress;
+    opacity: 0.72;
+}
+
+.resume-feedback {
+    gap: 24px;
+}
+
+.resume-assessment {
+    display: grid;
+    grid-template-columns: minmax(0, 1.4fr) minmax(220px, 0.8fr);
+    gap: 16px;
+    padding: 21px;
+    border: 1px solid rgba(124, 92, 255, 0.32);
+    border-radius: 15px;
+    background: linear-gradient(140deg, rgba(124, 92, 255, 0.1), #0b0f18 66%);
+}
+
+.assessment-copy h3,
+.resume-section-heading h3 {
+    margin: 4px 0 8px;
+    color: #f4f2ff;
+    font-size: 19px;
+}
+
+.assessment-copy > p,
+.target-fit-card > p,
+.assessment-impression {
+    color: #c2c9d5;
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+.target-fit-card {
+    align-self: stretch;
+    padding: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    background: rgba(8, 11, 18, 0.65);
+}
+
+.target-fit-card > p {
+    margin-top: 7px;
+}
+
+.assessment-impression {
+    grid-column: 1 / -1;
+    margin: 0;
+    padding-top: 13px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.resume-feedback-grid,
+.resume-section-grid,
+.ats-keyword-grid,
+.summary-version-grid,
+.skill-priority-grid,
+.action-plan-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 13px;
+}
+
+.feedback-section {
+    min-width: 0;
+    padding: 18px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 13px;
+    background: #0b0f18;
+}
+
+.feedback-section h3 {
+    margin: 4px 0 10px;
+    color: #f4f2ff;
+    font-size: 16px;
+}
+
+.feedback-section ul,
+.resume-detail-content ul,
+.skill-priority-card ul,
+.review-note-card ul,
+.action-plan-card ul,
+.verify-metrics ul {
+    display: grid;
+    gap: 8px;
+    margin: 0;
+    padding-left: 19px;
+    color: #c3c9d4;
+    font-size: 13px;
+}
+
+.feedback-strengths {
+    border-color: rgba(110, 196, 132, 0.22);
+}
+
+.feedback-improvements {
+    border-color: rgba(228, 196, 126, 0.2);
+}
+
+.resume-section-heading {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 3px;
+    margin-bottom: 12px;
+}
+
+.resume-section-heading h3 {
+    margin: 1px 0 0;
+}
+
+.resume-section-heading > p {
+    color: #9da7b7;
+    font-size: 12px;
+}
+
+.resume-detail-card,
+.summary-version-card,
+.skill-priority-card,
+.review-note-card,
+.action-plan-card,
+.ats-keyword-group {
+    min-width: 0;
+    padding: 16px;
+    border: 1px solid #293142;
+    border-radius: 13px;
+    background: #0c111a;
+    overflow-wrap: anywhere;
+}
+
+.resume-detail-card > summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    color: #e4e0ff;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    list-style: none;
+}
+
+.resume-detail-card > summary::-webkit-details-marker {
+    display: none;
+}
+
+.resume-detail-card > summary > span:last-child {
+    color: #b5a7ff;
+    transition: transform 160ms ease;
+}
+
+.resume-detail-card[open] > summary > span:last-child {
+    transform: rotate(180deg);
+}
+
+.resume-detail-content {
+    padding-top: 13px;
+}
+
+.resume-detail-content h4,
+.summary-version-card h4,
+.skill-priority-card h4,
+.review-note-card h4,
+.action-plan-card h4,
+.ats-keyword-group h4 {
+    margin: 11px 0 6px;
+    color: #e7e9ef;
+    font-size: 13px;
+}
+
+.resume-detail-content > p,
+.summary-version-card > p,
+.review-note-card > p,
+.action-plan-card > p,
+.resume-detail-content li {
+    color: #b9c1cf;
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.resume-detail-content .skill-tags {
+    margin: 0 0 9px;
+}
+
+.ats-keyword-group h4 {
+    margin-top: 0;
+}
+
+.ats-keyword-group .skill-tags {
+    margin-top: 8px;
+}
+
+.bullet-improvement-list {
+    display: grid;
+    gap: 12px;
+}
+
+.bullet-improvement-card {
+    min-width: 0;
+    padding: 16px;
+    border: 1px solid #293142;
+    border-radius: 13px;
+    background: #0c111a;
+}
+
+.bullet-comparison {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.bullet-comparison > div {
+    min-width: 0;
+    padding: 13px;
+    border-radius: 10px;
+    background: #080b12;
+}
+
+.bullet-comparison > div:last-child {
+    border: 1px solid rgba(124, 92, 255, 0.2);
+    background: rgba(124, 92, 255, 0.07);
+}
+
+.bullet-comparison p,
+.rewritten-description p {
+    margin-top: 7px;
+    color: #d3d8e1;
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.review-explanation {
+    margin-top: 10px;
+    color: #aab2c0;
+    font-size: 12px;
+}
+
+.verify-metrics {
+    margin-top: 12px;
+    padding: 11px 13px;
+    border-left: 2px solid #e4c47e;
+    border-radius: 0 9px 9px 0;
+    background: rgba(228, 196, 126, 0.06);
+    color: #e4c47e;
+    font-size: 11px;
+}
+
+.verify-metrics ul {
+    margin-top: 6px;
+    color: #c3c9d4;
+    font-size: 11px;
+}
+
+.rewritten-description {
+    margin-top: 13px;
+    padding: 13px;
+    border-radius: 10px;
+    background: #080b12;
+}
+
+.summary-version-card {
+    border-color: rgba(124, 92, 255, 0.18);
+}
+
+.summary-version-card h4 {
+    margin-top: 0;
+    color: #c8bdff;
+}
+
+.skill-priority-card h4 {
+    margin-top: 0;
+}
+
+.priority-high {
+    border-top: 2px solid #e4c47e;
+}
+
+.priority-medium {
+    border-top: 2px solid #9c8bff;
+}
+
+.priority-optional {
+    border-top: 2px solid #657187;
+}
+
+.skill-priority-card li p {
+    margin: 3px 0 0;
+    color: #9da7b7;
+    font-size: 12px;
+}
+
+.recruiter-highlight {
+    margin-bottom: 12px;
+    padding: 13px 15px;
+    border-left: 3px solid #8de0a2;
+    border-radius: 0 10px 10px 0;
+    background: rgba(110, 196, 132, 0.07);
+    color: #d5e8d9;
+    font-size: 13px;
+}
+
+.action-plan-card {
+    padding-top: 13px;
+}
+
+.action-plan-card .priority-badge {
+    margin-left: 0;
+}
+
+.action-plan-card h4 {
+    margin-top: 9px;
+}
+
+.action-plan-card li {
+    font-size: 12px;
+}
+
+.legacy-actions {
+    margin-top: 3px;
+}
+
+.legacy-actions > ul {
+    margin-top: 10px;
+    padding-left: 20px;
+    color: #c3c9d4;
+}
+
+@media (max-width: 700px) {
+    .resume-assessment {
+        grid-template-columns: 1fr;
+        padding: 17px;
+    }
+
+    .assessment-impression {
+        grid-column: auto;
+    }
+
+    .resume-feedback-grid,
+    .resume-section-grid,
+    .ats-keyword-grid,
+    .summary-version-grid,
+    .skill-priority-grid,
+    .action-plan-grid,
+    .bullet-comparison {
+        grid-template-columns: 1fr;
+    }
+
+    .resume-panel-heading {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .resume-detail-card > summary > span:last-child {
+        transition: none;
+    }
+}

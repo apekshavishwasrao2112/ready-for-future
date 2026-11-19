@@ -4,7 +4,7 @@
 {% block title %}Skill Development | Ready for Future{% endblock %}
 
 {% block extra_css %}
-    <link rel="stylesheet" href="{% static 'css/learning.css' %}">
+    <link rel="stylesheet" href="{% static 'css/learning.css' %}?v=20261119.1">
 {% endblock %}
 
 {% block content %}
@@ -101,7 +101,7 @@
                     <span class="eyebrow">SKILL ROADMAP</span>
                     <h2 id="roadmap-heading">Core developer skills</h2>
                 </div>
-                <span class="section-count">6 learning plans</span>
+                <span class="section-count">{{ skills|length }} learning plans</span>
             </div>
             <div class="skill-grid">
                 {% for skill in skills %}
@@ -117,7 +117,7 @@
                         <h3>{{ skill.title }}</h3>
                         <p>{{ skill.description }}</p>
                         <details class="learning-plan" id="plan-{{ skill.key }}">
-                            <summary class="btn btn-secondary plan-toggle" aria-controls="plan-details-{{ skill.key }}">
+                            <summary class="btn btn-secondary plan-toggle" aria-controls="plan-details-{{ skill.key }}" aria-expanded="false">
                                 <span data-plan-label>View Learning Plan</span>
                                 <span class="plan-chevron" aria-hidden="true">⌄</span>
                             </summary>
@@ -161,7 +161,7 @@
                     <span class="eyebrow">PRACTICE CHECKLIST</span>
                     <h2 id="checklist-heading">Build evidence of your skills</h2>
                 </div>
-                <span class="section-count">6 practical tasks</span>
+                <span class="section-count">{{ readiness_tasks|length }} practical tasks</span>
             </div>
             <details class="more-practice">
                 <summary>
@@ -190,6 +190,7 @@
                                 <span class="checklist-status" data-checklist-status>{% if task.completed %}Completed{% else %}To do{% endif %}</span>
                                 <button class="btn btn-secondary task-save-fallback" type="submit">Save</button>
                             </form>
+                            <p class="checklist-task-description">{{ task.description }}</p>
                         </li>
                     {% endfor %}
                 </ul>
@@ -200,5 +201,5 @@
 {% endblock %}
 
 {% block extra_js %}
-    <script src="{% static 'js/learning.js' %}" defer></script>
+    <script src="{% static 'js/learning.js' %}?v=20261119.1" defer></script>
 {% endblock %}

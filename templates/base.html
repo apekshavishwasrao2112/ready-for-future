@@ -15,10 +15,10 @@
         {% endblock %}
     </title>
 
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
-    <link rel="stylesheet" href="{% static 'css/navbar.css' %}">
-    <link rel="stylesheet" href="{% static 'css/auth.css' %}">
-    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}?v=20261119.1">
+    <link rel="stylesheet" href="{% static 'css/navbar.css' %}?v=20261119.1">
+    <link rel="stylesheet" href="{% static 'css/auth.css' %}?v=20261119.1">
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}?v=20261119.1">
     {% block extra_css %}{% endblock %}
 
 </head>
@@ -30,57 +30,80 @@
          NAVIGATION
     ========================== -->
 
+    {% with current_namespace=request.resolver_match.namespace current_url=request.resolver_match.url_name %}
     <nav class="navbar">
 
-        <!-- Logo -->
+        <a class="brand-link" href="{% url 'career:home' %}" aria-label="Ready for Future home">
+            <span class="logo-icon" aria-hidden="true">RF</span>
+            <span class="brand-name">Ready for Future</span>
+        </a>
 
-        <div class="logo">
+        <button
+            class="menu-toggle"
+            type="button"
+            aria-controls="primary-navigation"
+            aria-expanded="false"
+            aria-label="Open navigation menu"
+            data-menu-toggle>
+            <span aria-hidden="true">☰</span>
+        </button>
 
-            <span class="logo-icon">
-                RF
-            </span>
+        <div class="nav-links" id="primary-navigation" role="navigation" aria-label="Primary">
 
-            <span>
-                Ready for Future
-            </span>
-
-        </div>
-
-
-        <!-- Navigation Links -->
-
-        <div class="nav-links">
-
-            <a href="{% url 'career:home' %}">
+            <a
+                href="{% url 'career:home' %}"
+                class="{% if current_namespace == 'career' and current_url == 'home' %}is-active{% endif %}"
+                {% if current_namespace == 'career' and current_url == 'home' %}aria-current="page"{% endif %}>
                 Home
             </a>
 
             {% if user.is_authenticated %}
-                <a href="{% url 'career:dashboard' %}">
+                <a
+                    href="{% url 'career:dashboard' %}"
+                    class="{% if current_namespace == 'career' and current_url == 'dashboard' %}is-active{% endif %}"
+                    {% if current_namespace == 'career' and current_url == 'dashboard' %}aria-current="page"{% endif %}>
                     Dashboard
                 </a>
 
-                <a href="{% url 'career:profile' %}">
+                <a
+                    href="{% url 'career:profile' %}"
+                    class="{% if current_namespace == 'career' and current_url == 'profile' %}is-active{% endif %}"
+                    {% if current_namespace == 'career' and current_url == 'profile' %}aria-current="page"{% endif %}>
                     Profile
                 </a>
 
-                <a href="{% url 'resumes:list' %}">
+                <a
+                    href="{% url 'resumes:list' %}"
+                    class="{% if current_namespace == 'resumes' %}is-active{% endif %}"
+                    {% if current_namespace == 'resumes' %}aria-current="page"{% endif %}>
                     Resumes
                 </a>
 
-                <a href="{% url 'learning:roadmap' %}">
+                <a
+                    href="{% url 'learning:roadmap' %}"
+                    class="{% if current_namespace == 'learning' %}is-active{% endif %}"
+                    {% if current_namespace == 'learning' %}aria-current="page"{% endif %}>
                     Learning
                 </a>
 
-                <a href="{% url 'interview:questions' %}">
+                <a
+                    href="{% url 'interview:questions' %}"
+                    class="{% if current_namespace == 'interview' %}is-active{% endif %}"
+                    {% if current_namespace == 'interview' %}aria-current="page"{% endif %}>
                     Interview
                 </a>
             {% else %}
-                <a href="{% url 'accounts:login' %}">
+                <a
+                    href="{% url 'accounts:login' %}"
+                    class="{% if current_namespace == 'accounts' and current_url == 'login' %}is-active{% endif %}"
+                    {% if current_namespace == 'accounts' and current_url == 'login' %}aria-current="page"{% endif %}>
                     Login
                 </a>
 
-                <a href="{% url 'accounts:register' %}">
+                <a
+                    href="{% url 'accounts:register' %}"
+                    class="{% if current_namespace == 'accounts' and current_url == 'register' %}is-active{% endif %}"
+                    {% if current_namespace == 'accounts' and current_url == 'register' %}aria-current="page"{% endif %}>
                     Register
                 </a>
             {% endif %}
@@ -94,11 +117,11 @@
 
             {% if user.is_authenticated %}
 
-                <!-- Logged-in user -->
-
-                <span class="nav-user">
-                    Hi, {{ user.username }}
-                </span>
+                {% firstof user.get_full_name user.username as nav_display_name %}
+                <div class="nav-user">
+                    <span class="nav-avatar" aria-hidden="true">{{ nav_display_name|first|upper }}</span>
+                    <span class="nav-user-name">{{ nav_display_name }}</span>
+                </div>
 
                 <a
                     href="{% url 'accounts:logout' %}"
@@ -113,6 +136,7 @@
         </div>
 
     </nav>
+    {% endwith %}
 
 
     <!-- =========================
@@ -145,7 +169,7 @@
          JAVASCRIPT
     ========================== -->
 
-    <script src="{% static 'js/main.js' %}"></script>
+    <script src="{% static 'js/main.js' %}?v=20261119.1"></script>
     {% block extra_js %}{% endblock %}
 
 </body>

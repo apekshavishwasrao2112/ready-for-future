@@ -2,6 +2,27 @@ document.body.classList.add("js-enabled");
 
 const feedback = document.querySelector("[data-learning-feedback]");
 
+document.addEventListener("click", (event) => {
+    const summary = event.target.closest(".learning-plan > summary");
+    if (!summary) return;
+
+    event.preventDefault();
+    const selectedPlan = summary.parentElement;
+    const shouldOpen = !selectedPlan.open;
+
+    document.querySelectorAll(".learning-plan").forEach((plan) => {
+        plan.open = plan === selectedPlan && shouldOpen;
+        const toggle = plan.querySelector(".plan-toggle");
+        const label = plan.querySelector("[data-plan-label]");
+        if (toggle) toggle.setAttribute("aria-expanded", String(plan.open));
+        if (label) {
+            label.textContent = plan.open
+                ? "Hide Learning Plan"
+                : "View Learning Plan";
+        }
+    });
+});
+
 function showFeedback(message, isError = false) {
     if (!feedback) return;
     feedback.textContent = message;

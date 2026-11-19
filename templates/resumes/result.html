@@ -4,14 +4,14 @@
 {% block title %}Resume Review | Ready for Future{% endblock %}
 
 {% block extra_css %}
-    <link rel="stylesheet" href="{% static 'css/resume.css' %}">
+    <link rel="stylesheet" href="{% static 'css/resume.css' %}?v=20261119.1">
 {% endblock %}
 
 {% block content %}
 <section class="resume-page">
     <div class="resume-card">
         <span class="section-label">RESUME REVIEW</span>
-        <h1>Resume Review</h1>
+        <h1>Your resume review</h1>
         <p class="resume-intro">
             Your PDF is stored. You can download it here:
             <a class="resume-text-link" href="{% url 'resumes:download' resume.id %}">
@@ -23,60 +23,263 @@
             <p class="resume-success">{{ message }}</p>
         {% endfor %}
 
-        <section class="feedback-panel ai-panel">
-            <h2>AI Resume Feedback</h2>
+        <section class="feedback-panel ai-panel" aria-labelledby="resume-feedback-heading">
+            <div class="resume-panel-heading">
+                <div>
+                    <span class="eyebrow">PERSONALIZED REVIEW</span>
+                    <h2 id="resume-feedback-heading">AI resume feedback</h2>
+                </div>
+                <span class="review-source">Based on extracted PDF text</span>
+            </div>
             <p class="resume-note">
-                Feedback is based on text extracted from this PDF. Your career
-                profile is used only as optional context.
+                The review uses your extracted resume text and optional career
+                context. Your PDF itself is not sent to the AI service.
             </p>
-            <form method="post" class="feedback-form">
+            <form method="post" class="feedback-form" data-ai-form>
                 {% csrf_token %}
-                <button class="btn btn-primary" type="submit">
-                    Get AI Feedback
+                <button class="btn btn-primary" type="submit" data-loading-label="Reviewing your resume...">
+                    Review my resume <span aria-hidden="true">→</span>
                 </button>
             </form>
             {% if ai_error %}
                 <p class="ai-error" role="alert">{{ ai_error }}</p>
             {% endif %}
+
             {% if ai_feedback %}
                 <div class="resume-feedback">
-                    <section class="feedback-section">
-                        <h3>Overall Feedback</h3>
-                        <p>{{ ai_feedback.overall_feedback }}</p>
+                    <section class="resume-assessment">
+                        <div class="assessment-copy">
+                            <span class="eyebrow">RECRUITER FIRST IMPRESSION</span>
+                            <h3>Overall assessment</h3>
+                            <p>{{ ai_feedback.overall_feedback }}</p>
+                        </div>
+                        {% if ai_feedback.target_role_fit %}
+                            <div class="target-fit-card">
+                                <span class="card-label">TARGET ROLE FIT</span>
+                                <p>{{ ai_feedback.target_role_fit }}</p>
+                            </div>
+                        {% endif %}
+                        {% if ai_feedback.recruiter_first_impression %}
+                            <p class="assessment-impression">{{ ai_feedback.recruiter_first_impression }}</p>
+                        {% endif %}
                     </section>
 
-                    <section class="feedback-section">
-                        <h3>Strengths</h3>
-                        <ul>
-                            {% for point in ai_feedback.strengths %}
-                                <li>{{ point }}</li>
-                            {% empty %}
-                                <li>No strengths were returned.</li>
-                            {% endfor %}
-                        </ul>
+                    <div class="resume-feedback-grid">
+                        {% if ai_feedback.strengths %}
+                            <section class="feedback-section feedback-strengths">
+                                <span class="eyebrow">WHAT IS WORKING</span>
+                                <h3>Strengths</h3>
+                                <ul>
+                                    {% for point in ai_feedback.strengths %}<li>{{ point }}</li>{% endfor %}
+                                </ul>
+                            </section>
+                        {% endif %}
+                        {% if ai_feedback.areas_to_improve %}
+                            <section class="feedback-section feedback-improvements">
+                                <span class="eyebrow">WHERE TO FOCUS</span>
+                                <h3>Areas to improve</h3>
+                                <ul>
+                                    {% for point in ai_feedback.areas_to_improve %}<li>{{ point }}</li>{% endfor %}
+                                </ul>
+                            </section>
+                        {% endif %}
+                    </div>
+
+                    {% if ai_feedback.section_analysis %}
+                        <section class="resume-report-section" aria-labelledby="section-analysis-heading">
+                            <div class="resume-section-heading">
+                                <span class="eyebrow">CONTENT REVIEW</span>
+                                <h3 id="section-analysis-heading">Section-by-section analysis</h3>
+                                <p>Only sections found in your resume are included.</p>
+                            </div>
+                            <div class="resume-section-grid">
+                                {% for section in ai_feedback.section_analysis %}
+                                    <details class="resume-detail-card">
+                                        <summary>
+                                            <span>{{ section.section }}</span>
+                                            <span aria-hidden="true">⌄</span>
+                                        </summary>
+                                        <div class="resume-detail-content">
+                                            {% if section.what_is_good %}<h4>What is good</h4><p>{{ section.what_is_good }}</p>{% endif %}
+                                            {% if section.what_is_missing %}<h4>What may be missing</h4><p>{{ section.what_is_missing }}</p>{% endif %}
+                                            {% if section.improvements %}
+                                                <h4>Specific improvements</h4>
+                                                <ul>{% for item in section.improvements %}<li>{{ item }}</li>{% endfor %}</ul>
+                                            {% endif %}
+                                        </div>
+                                    </details>
+                                {% endfor %}
+                            </div>
+                        </section>
+                    {% endif %}
+
+                    {% if ai_feedback.ats_keywords.present or ai_feedback.ats_keywords.missing or ai_feedback.ats_keywords.recommend_if_truthful or ai_feedback.ats_keywords.skills_to_highlight %}
+                        <section class="resume-report-section" aria-labelledby="ats-heading">
+                            <div class="resume-section-heading">
+                                <span class="eyebrow">ROLE RELEVANCE</span>
+                                <h3 id="ats-heading">ATS keyword analysis</h3>
+                                <p>Only add a suggested keyword when it accurately reflects your experience.</p>
+                            </div>
+                            <div class="ats-keyword-grid">
+                                {% if ai_feedback.ats_keywords.present %}
+                                    <div class="ats-keyword-group">
+                                        <h4>Already present</h4>
+                                        <div class="skill-tags">{% for item in ai_feedback.ats_keywords.present %}<span class="skill-tag skill-tag-current">{{ item }}</span>{% endfor %}</div>
+                                    </div>
+                                {% endif %}
+                                {% if ai_feedback.ats_keywords.missing %}
+                                    <div class="ats-keyword-group">
+                                        <h4>Not found for this target role</h4>
+                                        <div class="skill-tags">{% for item in ai_feedback.ats_keywords.missing %}<span class="skill-tag">{{ item }}</span>{% endfor %}</div>
+                                    </div>
+                                {% endif %}
+                                {% if ai_feedback.ats_keywords.recommend_if_truthful %}
+                                    <div class="ats-keyword-group">
+                                        <h4>Consider adding if truthful</h4>
+                                        <div class="skill-tags">{% for item in ai_feedback.ats_keywords.recommend_if_truthful %}<span class="skill-tag">{{ item }}</span>{% endfor %}</div>
+                                    </div>
+                                {% endif %}
+                                {% if ai_feedback.ats_keywords.skills_to_highlight %}
+                                    <div class="ats-keyword-group">
+                                        <h4>Skills to make clearer</h4>
+                                        <div class="skill-tags">{% for item in ai_feedback.ats_keywords.skills_to_highlight %}<span class="skill-tag">{{ item }}</span>{% endfor %}</div>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </section>
+                    {% endif %}
+
+                    {% if ai_feedback.bullet_improvements %}
+                        <section class="resume-report-section" aria-labelledby="bullet-improvements-heading">
+                            <div class="resume-section-heading">
+                                <span class="eyebrow">MAKE YOUR IMPACT CLEAR</span>
+                                <h3 id="bullet-improvements-heading">Bullet point improvements</h3>
+                                <p>Rewrites preserve your facts and do not invent results or metrics.</p>
+                            </div>
+                            <div class="bullet-improvement-list">
+                                {% for item in ai_feedback.bullet_improvements %}
+                                    <article class="bullet-improvement-card">
+                                        <div class="bullet-comparison">
+                                            <div>
+                                                <span class="card-label">ORIGINAL</span>
+                                                <p>{{ item.original_bullet }}</p>
+                                            </div>
+                                            <div>
+                                                <span class="card-label">SUGGESTED REWRITE</span>
+                                                <p>{{ item.improved_bullet }}</p>
+                                            </div>
+                                        </div>
+                                        {% if item.problem %}<p class="review-explanation"><strong>Why change it:</strong> {{ item.problem }}</p>{% endif %}
+                                        {% if item.why_stronger %}<p class="review-explanation"><strong>Why this is clearer:</strong> {{ item.why_stronger }}</p>{% endif %}
+                                        {% if item.metrics_to_verify %}
+                                            <div class="verify-metrics">
+                                                <strong>Possible genuine metrics to check</strong>
+                                                <ul>{% for metric in item.metrics_to_verify %}<li>{{ metric }}</li>{% endfor %}</ul>
+                                            </div>
+                                        {% endif %}
+                                    </article>
+                                {% endfor %}
+                            </div>
+                        </section>
+                    {% endif %}
+
+                    {% if ai_feedback.project_analysis %}
+                        <section class="resume-report-section" aria-labelledby="project-analysis-heading">
+                            <div class="resume-section-heading">
+                                <span class="eyebrow">SHOW YOUR WORK</span>
+                                <h3 id="project-analysis-heading">Project review</h3>
+                            </div>
+                            <div class="resume-section-grid">
+                                {% for project in ai_feedback.project_analysis %}
+                                    <details class="resume-detail-card">
+                                        <summary>
+                                            <span>{{ project.project }}</span>
+                                            <span aria-hidden="true">⌄</span>
+                                        </summary>
+                                        <div class="resume-detail-content">
+                                            {% if project.technologies %}
+                                                <div class="skill-tags">{% for item in project.technologies %}<span class="skill-tag">{{ item }}</span>{% endfor %}</div>
+                                            {% endif %}
+                                            {% if project.strengths %}<h4>Strengths</h4><ul>{% for item in project.strengths %}<li>{{ item }}</li>{% endfor %}</ul>{% endif %}
+                                            {% if project.missing %}<h4>What could be clearer</h4><ul>{% for item in project.missing %}<li>{{ item }}</li>{% endfor %}</ul>{% endif %}
+                                            {% if project.improvements %}<h4>Improvements</h4><ul>{% for item in project.improvements %}<li>{{ item }}</li>{% endfor %}</ul>{% endif %}
+                                            {% if project.recommended_features %}<h4>Possible next features</h4><ul>{% for item in project.recommended_features %}<li>{{ item }}</li>{% endfor %}</ul>{% endif %}
+                                            {% if project.rewritten_description %}<div class="rewritten-description"><span class="card-label">SUGGESTED DESCRIPTION</span><p>{{ project.rewritten_description }}</p></div>{% endif %}
+                                        </div>
+                                    </details>
+                                {% endfor %}
+                            </div>
+                        </section>
+                    {% endif %}
+
+                    {% if ai_feedback.summary_versions.technical or ai_feedback.summary_versions.project_focused or ai_feedback.summary_versions.fresher_job_focused %}
+                        <section class="resume-report-section" aria-labelledby="summary-suggestions-heading">
+                            <div class="resume-section-heading">
+                                <span class="eyebrow">OPTIONAL DRAFTS TO ADAPT</span>
+                                <h3 id="summary-suggestions-heading">Professional summary ideas</h3>
+                            </div>
+                            <div class="summary-version-grid">
+                                {% if ai_feedback.summary_versions.technical %}<article class="summary-version-card"><h4>Technical</h4><p>{{ ai_feedback.summary_versions.technical }}</p></article>{% endif %}
+                                {% if ai_feedback.summary_versions.project_focused %}<article class="summary-version-card"><h4>Project-focused</h4><p>{{ ai_feedback.summary_versions.project_focused }}</p></article>{% endif %}
+                                {% if ai_feedback.summary_versions.fresher_job_focused %}<article class="summary-version-card"><h4>Fresher / job-focused</h4><p>{{ ai_feedback.summary_versions.fresher_job_focused }}</p></article>{% endif %}
+                            </div>
+                        </section>
+                    {% endif %}
+
+                    {% if ai_feedback.skill_recommendations.high_priority or ai_feedback.skill_recommendations.medium_priority or ai_feedback.skill_recommendations.optional_future %}
+                        <section class="resume-report-section" aria-labelledby="skill-recommendations-heading">
+                            <div class="resume-section-heading">
+                                <span class="eyebrow">DEVELOP WITH INTENTION</span>
+                                <h3 id="skill-recommendations-heading">Skills to consider building</h3>
+                            </div>
+                            <div class="skill-priority-grid">
+                                {% if ai_feedback.skill_recommendations.high_priority %}
+                                    <div class="skill-priority-card priority-high"><h4>High priority</h4><ul>{% for item in ai_feedback.skill_recommendations.high_priority %}<li><strong>{{ item.skill }}</strong>{% if item.why %}<p>{{ item.why }}</p>{% endif %}</li>{% endfor %}</ul></div>
+                                {% endif %}
+                                {% if ai_feedback.skill_recommendations.medium_priority %}
+                                    <div class="skill-priority-card priority-medium"><h4>Medium priority</h4><ul>{% for item in ai_feedback.skill_recommendations.medium_priority %}<li><strong>{{ item.skill }}</strong>{% if item.why %}<p>{{ item.why }}</p>{% endif %}</li>{% endfor %}</ul></div>
+                                {% endif %}
+                                {% if ai_feedback.skill_recommendations.optional_future %}
+                                    <div class="skill-priority-card priority-optional"><h4>Optional / future</h4><ul>{% for item in ai_feedback.skill_recommendations.optional_future %}<li><strong>{{ item.skill }}</strong>{% if item.why %}<p>{{ item.why }}</p>{% endif %}</li>{% endfor %}</ul></div>
+                                {% endif %}
+                            </div>
+                        </section>
+                    {% endif %}
+
+                    {% if ai_feedback.recruiter_perspective.strongest or ai_feedback.recruiter_perspective.concerns or ai_feedback.recruiter_perspective.missing_information or ai_feedback.recruiter_perspective.rejection_risks or ai_feedback.recruiter_perspective.shortlisting_actions %}
+                        <section class="resume-report-section recruiter-insights" aria-labelledby="recruiter-insights-heading">
+                            <div class="resume-section-heading">
+                                <span class="eyebrow">A REALISTIC OUTSIDE VIEW</span>
+                                <h3 id="recruiter-insights-heading">What a recruiter may notice</h3>
+                            </div>
+                            {% if ai_feedback.recruiter_perspective.strongest %}<p class="recruiter-highlight">{{ ai_feedback.recruiter_perspective.strongest }}</p>{% endif %}
+                            <div class="resume-section-grid">
+                                {% if ai_feedback.recruiter_perspective.concerns %}<article class="review-note-card"><h4>Potential concerns</h4><ul>{% for item in ai_feedback.recruiter_perspective.concerns %}<li>{{ item }}</li>{% endfor %}</ul></article>{% endif %}
+                                {% if ai_feedback.recruiter_perspective.missing_information %}<article class="review-note-card"><h4>Information to clarify</h4><ul>{% for item in ai_feedback.recruiter_perspective.missing_information %}<li>{{ item }}</li>{% endfor %}</ul></article>{% endif %}
+                                {% if ai_feedback.recruiter_perspective.rejection_risks %}<article class="review-note-card"><h4>Risks to address</h4><ul>{% for item in ai_feedback.recruiter_perspective.rejection_risks %}<li>{{ item }}</li>{% endfor %}</ul></article>{% endif %}
+                                {% if ai_feedback.recruiter_perspective.shortlisting_actions %}<article class="review-note-card"><h4>Improve shortlisting clarity</h4><ul>{% for item in ai_feedback.recruiter_perspective.shortlisting_actions %}<li>{{ item }}</li>{% endfor %}</ul></article>{% endif %}
+                            </div>
+                        </section>
+                    {% endif %}
+
+                    <section class="resume-report-section" aria-labelledby="action-plan-heading">
+                        <div class="resume-section-heading">
+                            <span class="eyebrow">TURN FEEDBACK INTO ACTION</span>
+                            <h3 id="action-plan-heading">Recommended Actions · Prioritized improvement plan</h3>
+                        </div>
+                        <div class="action-plan-grid">
+                            <div class="action-plan-card"><span class="priority-badge">START HERE</span><h4>Immediate improvements</h4><ul>{% for item in ai_feedback.action_plan.immediate %}<li>{{ item }}</li>{% empty %}{% for item in ai_feedback.recommended_actions %}<li>{{ item }}</li>{% empty %}<li>Review the priority feedback above and update one section at a time.</li>{% endfor %}{% endfor %}</ul></div>
+                            <div class="action-plan-card"><span class="priority-badge">BEFORE APPLYING</span><h4>Final checks</h4><ul>{% for item in ai_feedback.action_plan.before_applying %}<li>{{ item }}</li>{% empty %}<li>Check role keywords, links, spelling, and consistent formatting.</li>{% endfor %}</ul></div>
+                            <div class="action-plan-card"><span class="priority-badge">KEEP BUILDING</span><h4>Long-term improvements</h4><ul>{% for item in ai_feedback.action_plan.long_term %}<li>{{ item }}</li>{% empty %}<li>Build and document projects that support your target role.</li>{% endfor %}</ul></div>
+                        </div>
                     </section>
 
-                    <section class="feedback-section">
-                        <h3>Areas to Improve</h3>
-                        <ul>
-                            {% for point in ai_feedback.areas_to_improve %}
-                                <li>{{ point }}</li>
-                            {% empty %}
-                                <li>No improvement areas were returned.</li>
-                            {% endfor %}
-                        </ul>
-                    </section>
-
-                    <section class="feedback-section">
-                        <h3>Recommended Actions</h3>
-                        <ul>
-                            {% for point in ai_feedback.recommended_actions %}
-                                <li>{{ point }}</li>
-                            {% empty %}
-                                <li>No recommended actions were returned.</li>
-                            {% endfor %}
-                        </ul>
-                    </section>
+                    {% if ai_feedback.areas_to_improve %}
+                        <details class="resume-detail-card legacy-actions">
+                            <summary>All improvement suggestions</summary>
+                            <ul>{% for point in ai_feedback.areas_to_improve %}<li>{{ point }}</li>{% endfor %}</ul>
+                        </details>
+                    {% endif %}
                 </div>
             {% endif %}
         </section>
@@ -89,8 +292,7 @@
                 See all resumes
             </a>
         </div>
-
     </div>
 </section>
-<script src="{% static 'js/resume.js' %}"></script>
+<script src="{% static 'js/resume.js' %}?v=20261119.1" defer></script>
 {% endblock %}

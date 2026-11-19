@@ -28,6 +28,7 @@ if (feedbackForm) {
         const feedbackButton = feedbackForm.querySelector("button[type='submit']");
         if (feedbackButton) {
             feedbackButton.disabled = true;
+            feedbackButton.setAttribute("aria-busy", "true");
             feedbackButton.textContent = "Reviewing PDF...";
         }
     });

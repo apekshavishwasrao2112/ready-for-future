@@ -223,19 +223,34 @@
 .skill-grid {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
+    align-items: start;
     gap: 14px;
 }
 
 .skill-card {
     min-width: 0;
+    display: flex;
+    flex-direction: column;
     padding: 17px;
-    transition: border-color 160ms ease, transform 160ms ease, box-shadow 160ms ease;
+    border-radius: var(--radius-card);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    transition: border-color 160ms ease, background-color 160ms ease, transform 160ms ease, box-shadow 160ms ease;
 }
 
 .skill-card:hover {
     transform: translateY(-2px);
     border-color: #55458f;
     box-shadow: 0 9px 20px rgba(0, 0, 0, 0.16);
+}
+
+.skill-card.is-completed {
+    border-color: rgba(110, 196, 132, 0.42);
+    background: #111b19;
+}
+
+.skill-card.is-completed .skill-icon {
+    background: rgba(110, 196, 132, 0.14);
+    color: #a4e7b3;
 }
 
 .skill-card-header {
@@ -317,6 +332,16 @@
     cursor: pointer;
 }
 
+.learning-plan > summary.btn:hover {
+    transform: none;
+}
+
+.learning-plan > summary.btn:focus-visible,
+.more-practice > summary:focus-visible {
+    outline: 3px solid #c2b6ff;
+    outline-offset: 3px;
+}
+
 .plan-chevron {
     transition: transform 160ms ease;
 }
@@ -330,6 +355,14 @@
     display: grid;
     gap: 11px;
     padding: 14px 2px 1px;
+}
+
+.plan-details > div {
+    min-width: 0;
+    padding: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 10px;
+    background: rgba(8, 11, 18, 0.55);
 }
 
 .plan-details h4 {
@@ -391,6 +424,10 @@
     display: none;
 }
 
+[data-progress-form][aria-busy="true"] {
+    opacity: 0.7;
+}
+
 .checklist-section .section-heading {
     margin-bottom: 12px;
 }
@@ -445,6 +482,17 @@
     min-width: 0;
     padding: 11px 0;
     border-bottom: 1px solid #252c3a;
+}
+
+.checklist-task-description {
+    margin: 4px 0 0 26px;
+    color: #929cad;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.checklist-item.is-completed .checklist-task-description {
+    color: #9ab8a1;
 }
 
 .checklist-form {
@@ -551,6 +599,10 @@
     .skill-grid,
     .checklist-list {
         grid-template-columns: 1fr;
+    }
+
+    .skill-card {
+        padding: 16px;
     }
 
     .skill-card > p {

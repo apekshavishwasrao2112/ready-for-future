@@ -67,12 +67,36 @@ SKILLS = [
 ]
 
 PRACTICE_TASKS = [
-    ('developer-build-api', 'Build a small Django REST API'),
-    ('developer-write-tests', 'Write tests for a Python or Django feature'),
-    ('developer-practice-sql', 'Practice SQL queries'),
-    ('developer-debug-error', 'Debug an intentional error'),
-    ('developer-push-github', 'Push a project to GitHub'),
-    ('developer-deploy-project', 'Deploy a project and document the process'),
+    {
+        'key': 'developer-build-api',
+        'title': 'Build a small Django REST API',
+        'description': 'Create a user-owned endpoint with validation and clear HTTP responses.',
+    },
+    {
+        'key': 'developer-write-tests',
+        'title': 'Write tests for a Python or Django feature',
+        'description': 'Cover a normal case, an invalid input, and an important edge case.',
+    },
+    {
+        'key': 'developer-practice-sql',
+        'title': 'Practice SQL queries',
+        'description': 'Use joins and grouping to answer a realistic data question.',
+    },
+    {
+        'key': 'developer-debug-error',
+        'title': 'Debug an intentional error',
+        'description': 'Trace a failure to its cause and record the fix and regression test.',
+    },
+    {
+        'key': 'developer-push-github',
+        'title': 'Push a project to GitHub',
+        'description': 'Write a useful README and keep secrets out of the repository.',
+    },
+    {
+        'key': 'developer-deploy-project',
+        'title': 'Deploy a project and document the process',
+        'description': 'Document required environment variables and a repeatable deployment.',
+    },
 ]
 
 
@@ -104,8 +128,8 @@ def roadmap(request):
 
     skills = [dict(skill) for skill in SKILLS]
     readiness_tasks = [
-        {'key': key, 'title': title}
-        for key, title in PRACTICE_TASKS
+        dict(task)
+        for task in PRACTICE_TASKS
     ]
     task_keys = [
         skill['key'] for skill in skills
@@ -184,7 +208,7 @@ def update_task_progress(request, task_key):
         return redirect('career:profile')
 
     skill_keys = {skill['key'] for skill in SKILLS}
-    allowed_keys = skill_keys | {task[0] for task in PRACTICE_TASKS}
+    allowed_keys = skill_keys | {task['key'] for task in PRACTICE_TASKS}
     is_json = request.headers.get('Accept') == 'application/json'
 
     if task_key not in allowed_keys:

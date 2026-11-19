@@ -1,3 +1,17 @@
+:root {
+    --color-canvas: #080b12;
+    --color-surface: #10141d;
+    --color-surface-raised: #151a25;
+    --color-text: #f4f7fb;
+    --color-muted: #aab2c0;
+    --color-accent: #7c5cff;
+    --color-accent-hover: #6242ec;
+    --color-border: #252b37;
+    --radius-card: 18px;
+    --radius-control: 10px;
+    --shadow-card: 0 18px 48px rgba(0, 0, 0, 0.24);
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -12,8 +26,8 @@ html {
 
 body {
     font-family: Arial, Helvetica, sans-serif;
-    background: #080b12;
-    color: #f4f7fb;
+    background: var(--color-canvas);
+    color: var(--color-text);
     line-height: 1.6;
 }
 
